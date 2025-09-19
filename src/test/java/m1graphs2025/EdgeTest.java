@@ -1,7 +1,7 @@
 
 package m1graphs2025;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -20,6 +20,33 @@ public class EdgeTest
     Edge edge1 = new Edge(new Node(1, graph), new Node(2, graph));
     Edge edge2 = new Edge(1, 2, 1);
     Edge edge3 = new Edge(1, 2);
+  }
+
+  @Test void testNullConstructors()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Edge(null, new Node(1, graph));
+    });
+   
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Edge(new Node(1, graph)), null);
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Edge(-1, 1);
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Edge(0, 1);
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Edge(1, -1);
+    });
+ 
+    assertThrows(IllegalArgumentException.class, () -> {
+      new Edge(1, 0);
+    });
   }
 
   @Test
@@ -88,6 +115,21 @@ public class EdgeTest
     assertFalse(new Edge(1, 2).equals(new Edge(3, 2)); //From diff
     assertFalse(new Edge(1, 2, 1).equals(new Edge(3, 2, 1)); //From diff
     assertFalse(new Edge(1, 2, 1).equals(new Edge(1, 2, 3)); //Weight diff
+    Edge edge = new Edge(1, 2);
+    assertTrue(edge.equals(edge));
+    assertFalse(edge.equals(new Node(1, graph));
+  }
+
+  @Test
+  public void testCompareTo()
+  {
+    assertEqual(0, new Edge(1, 2).compareTo(new Edge(1, 2)); //Equals all
+    assertTrue(new Edge(1, 2).compareTo(new Edge(2, 2) < 0); //Lower from
+    assertTrue(new Edge(3, 2).compareTo(new Edge(2, 2) > 0); //Higher from
+    assertTrue(new Edge(1, 1).compareTo(new Edge(1, 2) < 0); //Lower to
+    assertTrue(new Edge(1, 3).compareTo(new Edge(1, 2) > 0); //Higher to
+    assertTrue(new Edge(1, 2, 0).compareTo(new Edge(1, 2, 1) < 0); //Lower weight
+    assertTrue(new Edge(1, 2, 1).compareTo(new Edge(1, 2, 0) > 0); //Higher weight
   }
 
   @Test 
