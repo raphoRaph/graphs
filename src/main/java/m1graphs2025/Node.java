@@ -53,12 +53,12 @@ public class Node implements Comparable<Node>{
   public int getId() {
     return this.id;
   }
-  
+
   /**
    * @return the graph to which this node belongs
    */
   public Graph getGraph() {
-    return graphHolder;
+    return this.graphHolder;
   }
 
   /**
@@ -235,20 +235,20 @@ public class Node implements Comparable<Node>{
     return (this.id.equals(other.id) && this.name.equals(other.name));
   }
 
-/**
- * @return a hash code consistent with Object
- */
+  /**
+   * @return a hash code consistent with Object
+   */
   @Override
   public int hashCode() {
     return Object.hash(this.id);
   }
 
- /**
-  * Compares this node to another node by ID
-  *
-  * @param o the other node
-  * @return a negative integer, zero, or a positive integer if this node's ID is less than, equal to, or greater than o's ID
-  */
+  /**
+   * Compares this node to another node by ID
+   *
+   * @param o the other node
+   * @return a negative integer, zero, or a positive integer if this node's ID is less than, equal to, or greater than o's ID
+   */
   @Override
   public int compareTo(Node o) {
     return this.id - o.id;
