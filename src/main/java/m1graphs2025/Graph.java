@@ -12,25 +12,7 @@ public class Graph {
     public Graph(int ... node){
         //id >= 1
     }
-
-    // create a graph by reading a DOT file
-    public Graph(String path){
-        fileReader fr = new fileReader();
-        getList lists = new getList();
-
-        if (path == null || path.trim().isEmpty()) {
-            System.out.println("You need to specify a path!");
-            return;
-        } else {
-            File CP_file = new File(path);
-            int count = fr.fileSizeInLines(CP_file);
-            System.out.println("Total number of lines in the file are: "+count);
-
-            List<String> lines = fr.strReader(CP_file);
-
-            //TODO
-        }
-    }
+    
 
     // Node part //
 
@@ -181,51 +163,82 @@ public class Graph {
         return count;
     }
 
+    public boolean existsEdge(Edge e){
+        return existsEdge(e.from(), e.to());
+    }
+
     public boolean existsEdge(Node u, Node v){
-        List<Edge> list = adjEdList.get(u);
+        return existsEdge(u.getId(), v.getId());
+    }
+
+    public boolean existsEdge(int uId, int vId){
+        List<Edge> list = adjEdList.get(getNode(uId));
         for (Edge edge : list){
-            if (edge.to == v){
+            if(edge.to == getNode(vId)){
                 return true;
             }
         }
         return false;
     }
 
-    //TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
-    public boolean existsEdge(int uId, int vId){
-        throw new NoImplementedExeption("not implemented");
+    public boolean isMultiEdge(Edge e){
+        return isMultiEdge(e.from(), e.to());
+    }
+    
+    public boolean isMultiEdge(Node u, Node v){
+        return isMultiEdge(u.getId(), v.getId());
     }
 
-    public boolean isMultiEdge(Node u, Node v){
+    public boolean isMultiEdge(int uId, int vId){
         int count = 0;
-        List<Edge> list = adjEdList.get(u);
+        List<Edge> list = adjEdList.get(getNode(uId));
         for (Edge edge : list){
-            if (edge.to == v){
+            if (edge.to == getNode(vId)){
                 count ++;
             }
         }
         return count >= 2;
     }
 
-    //TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
-    public boolean isMultiEdge(int uId, int vId){
-        throw new NoImplementedExeption("not implemented");
+    public void addEdge(Edge e){
+        addEdge(e.from(), e.to());
     }
 
     public void addEdge(Node from, Node to){
-        adjEdList.put(from, new Edge(from, to));
+        addEdge(from.getId(), to.getId());
     }
-
+    
     public void addEdge(int fromId, int toId){
-        throw new NoImplementedExeption("not implemented");
+        Node from = getNode(fromId);
+        adjEdList.put(from, adjEdList.get(from).add(new Edge(from, getNode(toId))));
     }
 
+    public boolean removeEdge(Edge e){
+        return removeEdge(e.from(), e.to());
+    }
+    
     public boolean removeEdge(Node from, Node to){
-        return adjEdList.get(from).remove(getEdge(from.getId(), to.getId()));
+        return removeEdge(from.getId(), to.getId());
     }
 
+    public boolean removeEdge(Node from, Node to, Integer weight){
+        return removeEdge(from.getId(), to.getId(), weight);
+    }
+    
     public boolean removeEdge(int fromId, int toId){
-        throw new NoImplementedExeption("not implemented");
+        Node from = getNode(fromId);
+        return adjEdList.get(from).remove(getEdge(fromId, toId));
+    }
+
+    public boolean removeEdge(int fromId, int toId, Integer weight){
+        Node from = getNode(fromId);
+        List<Edge> lst = getEdges(from, getNode(toId));
+        for(Edge edge : lst){
+            if (edge.getWeight() == weight){
+                return adjEdList.get(from).remove(edge);
+            }
+        }
+        return false;
     }
 
     public List<Edge> getOutEdges(Node n){
@@ -265,6 +278,13 @@ public class Graph {
     }
 
     public List<Edge> getEdges(Node u, Node v){
+        List<Edge> lst = new ArrayList<Edge>();
+        for (Edge edge : adjEdList.get(u)){
+            if (edge.from() == u && edge.to() == v){
+                lst.add(edge);
+            }
+        }
+        return lst;
     }
 
     public List<Edge> getAllEdges(){
