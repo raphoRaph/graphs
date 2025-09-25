@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class Graph {
 	private Map<Node, List<Edge>> adjEdList;
-/*
+
 	// create a graph through dedicated constructors (unweighted graph)
 	public Graph(int ... nodes) {
 		adjEdList = new HashMap<>();
@@ -16,18 +16,17 @@ public class Graph {
 		for (int idTo : nodes) {
 			if (idTo == 0) {
 				idFrom++;
-				continue;
+			} else {
+				addNodeIfAbsent(idFrom);
+				addNodeIfAbsent(idTo);
+				addEdge(idFrom, idTo);
 			}
-			addNodeIfAbsent(idFrom);
-			addNodeIfAbsent(idTo);
-			addEdge(idFrom, idTo);
 		}
 	}
-*/
+
 	public Graph() {
 		adjEdList = new HashMap<>();
 	}
-/*
 	// Node part //
 
 	public int nbNodes() {
@@ -50,7 +49,7 @@ public class Graph {
 	public boolean holdsNode(Node n){
 		return adjEdList.containsKey(n);
 	}
-		
+
 	public Node getNode(int id){
 		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
 			if (pair.getKey().getId() == id){
@@ -61,15 +60,26 @@ public class Graph {
 	}
 
 	public boolean addNode(Node n){
-		if (n.getId() <= 0 || usesNode(n)){
+		if (usesNode(n)){
 			return false;
 		}
-		//adjEdList.put(n, new List<Edge>);
+		adjEdList.put(n, new ArrayList<Edge>());
+		return true;
+	}
+
+	public boolean addNode(int nodeId) {
+		if (nodeId <= 0) {
+			throw new IllegalArgumentException("nodeId must be higher than 0");
+		}
+		if (usesNode(nodeId)) {
+			return false;
+		}
+		adjEdList.put(new Node(nodeId, this), new ArrayList<Edge>());
 		return true;
 	}
 
 	private void addNodeIfAbsent(int nodeId) {
-		if (!usesNode(nodeId)) addNode(nodeId, this);
+		if (!usesNode(nodeId)) addNode(nodeId);
 	}
 
 	public boolean removeNode(Node n){
@@ -92,37 +102,27 @@ public class Graph {
 	}
 
 	public List<Node> getAllNodes(){
-		List<Node> list = new ArrayList<Node>();
-		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
-			list.add(pair.getKey());
-		}
-		return list;
+		List<Node> nodeList = new ArrayList<Node>();
+		nodeList.addAll(adjEdList.keySet());
+		return nodeList;
 	}
 
 	public int largestNodeId(){
 		int largest = -1;
-		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
-			if (pair.getKey().getId() > largest){
-				largest = pair.getKey().getId();
-			}
+		for (Node node : adjEdList.keySet()){
+			largest = Math.max(largest, node.getId());
 		}
 		return largest;
 	}
 
 	public int smallestNodeId(){
-		int smallest = -1;
-		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
-			if (smallest == -1){
-				smallest = pair.getkey().getId();
-			}
-			if (pair.getKey().getId() < smallest){
-				smallest = pair.getKey().getId();
-			}
+		int smallest = Integer.MAX_VALUE;
+		for (Node node : adjEdList.keySet()){
+			smallest = Math.min(smallest, node.getId());
 		}
-		return smallest;
+		return smallest == Integer.MAX_VALUE ? -1 : smallest;
 	}
-*/
-/*
+
 	public List<Node> getSuccessors(Node n){
 		return n.getSuccessors();
 	}
@@ -163,34 +163,35 @@ public class Graph {
 		return degree(getNode(nodeId));
 	}
 
-
 	// edge part //
-	private Edge getEdge(int fromId, int toId){
-		for (Edge edge : adjEdList.get(getNode(fromId))){
-			if (edge.from().getId() == fromId && edge.to().getId() == toId){
+
+	private Edge getEdge(int fromId, int toId) {
+		for (Edge edge : adjEdList.get(getNode(fromId))) {
+			if (edge.from().getId() == fromId && edge.to().getId() == toId) {
 				return edge;
 			}
 		}
+		return null;
 	}
 
-	public int nbEdges(){
+	public int nbEdges() {
 		int count = 0;
-		for (adjEdList.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()) {
 			count += pair.getValue().size();
 		}						 
 		return count;
 	}
 
-	public boolean existsEdge(Node u, Node v){
+	public boolean existsEdge(Node u, Node v) {
 		List<Edge> list = adjEdList.get(u);
-		for (Edge edge : list){
-			if (edge.to == v){
+		for (Edge edge : list) {
+			if (edge.to() == v) {
 				return true;
 			}
 		}
 		return false;
 	}
-
+/*
 	//TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
 	public boolean existsEdge(int uId, int vId){
 		throw new NoImplementedExeption("not implemented");
@@ -207,19 +208,19 @@ public class Graph {
 		return count >= 2;
 	}
 
-	//TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
-	public boolean isMultiEdge(int uId, int vId){
-		throw new NoImplementedExeption("not implemented");
-	}
-
-	public void addEdge(Node from, Node to){
-		adjEdList.put(from, new Edge(from, to));
+		//TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
+		public boolean isMultiEdge(int uId, int vId){
+				throw new NoImplementedExeption("not implemented");
+		}
+*/
+	public void addEdge(Node from, Node to) {
+		//adjEdList.put(from, new Edge(from, to));
 	}
 
 	public void addEdge(int fromId, int toId){
-		throw new NoImplementedExeption("not implemented");
+		//addEdge(getNode(fromId), getNode(toId));
 	}
-
+/*
 	public boolean removeEdge(Node from, Node to){
 		return adjEdList.get(from).remove(getEdge(from.getId(), to.getId()));
 	}
@@ -304,10 +305,17 @@ public class Graph {
 	public boolean hasSelfLoops(){
 		return true;
 	}
+
+	public Graph copy(){
+	}
+
+	public boolean hasSelfLoops(){
+		return true;
+	}
 	
 	public Graph copy(){
 	}
-		
+	
 	// Graph traversal //
 	public List<Node> getDFS(){
 	}
