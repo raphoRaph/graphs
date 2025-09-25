@@ -1,6 +1,7 @@
 package m1graphs2025;
 
 import java.util.Objects;
+import java.util.NoSuchElementException;
 
 /**
  * This class represents a directed edge between two Node objects in a graph structure
@@ -14,22 +15,32 @@ public class Edge implements Comparable<Edge>{
 	private Node from;
 	private Node to;
 	private Integer weight;
+	private Graph graphHolder;
 
 	/**
 	 * Constructs a directed edge between two nodes with an optional weight
 	 *
 	 * @param from	 the source node (must not be null)
 	 * @param to		 the target node (must not be null)
+	 * @param graphHolder the graph that owns this edge
 	 * @param weight the wieght of the edge, or null for unweighted
-	 * @throws IllegalArgumentException if from or to is null
+	 * @throws IllegalArgumentException if from or to is null or graphHolder is null
+	 * @throws NullPointerException if graphHolder is null
+	 * @throws NoSuchElementException if fromId or toId is not in graphHolder
 	 */
-	public Edge(Node from, Node to, Integer weight) {
+	public Edge(Node from, Node to, Graph graphHolder, Integer weight) {
 		if (from == null || to == null) {
-			throw new IllegalArgumentException("From and to cannot be null");
+			throw new NullPointerException("From and to cannot be null");
 		}
-
+		if (graphHolder == null) {
+			throw new NullPointerException("GraphHolder cannot be null");
+		}
+		if (!graphHolder.usesNode(from) || !graphHolder.usesNode(to)) {
+			throw new NoSuchElementException("From or to must be in graphHolder");
+		}
 		this.from = from;
 		this.to = to;
+		this.graphHolder = graphHolder;
 		this.weight = weight;
 	}
 
@@ -40,8 +51,8 @@ public class Edge implements Comparable<Edge>{
 	 * @param to the target node (must not be null)
 	 * @throws IllegalArgumentException if from or to is null
 	 */
-	public Edge(Node from, Node to) {
-		this(from, to, null);
+	public Edge(Node from, Node to, Graph graphHolder) {
+		this(from, to, graphHolder, null);
 	}
 
 	/**
@@ -49,11 +60,26 @@ public class Edge implements Comparable<Edge>{
 	 *
 	 * @param fromId the ID of the source node
 	 * @param toId	 the ID of the target node
+	 * @param graphHolder the graph that owns this edge 
 	 * @param weight thie weight of the edge, or null for unweighted
 	 * @throws IllegalArgumentException if fromId or toId <= 0
+	 * @throws NullPointerException if graphHolder is null
+	 * @throws NoSuchElementException if fromId or toId is not in graphHolder
 	 */
-	public Edge(int fromId, int toId, Integer weight) {
-		throw new UnsupportedOperationException("Not implemented");
+	public Edge(int fromId, int toId, Graph graphHolder, Integer weight) {
+		if (fromId <= 0 || toId <= 0) {
+			throw new IllegalArgumentException("FromId and toId must be higher than 0");
+		}
+		if (graphHolder == null) {
+			throw new NullPointerException("GraphHolder cannot be null");
+		}
+		if (!graphHolder.usesNode(fromId) || !graphHolder.usesNode(toId)) {
+			throw new NoSuchElementException("FromId or toId must be in graphHoder");
+		}
+		this.from = graphHolder.getNode(fromId);
+		this.to = graphHolder.getNode(toId);
+		this.graphHolder = graphHolder;
+		this.weight = weight;
 	}
 
 	/**
@@ -61,10 +87,13 @@ public class Edge implements Comparable<Edge>{
 	 *
 	 * @param fromId the ID of the source node
 	 * @param toId	 the ID of the target node
-	 * @throws IllegalArgumentException of fromId or toId <= 0
+	 * @param graphHolder the graph that owns this edge
+	 * @throws IllegalArgumentException if fromId or toId <= 0
+	 * @throws NullPointerException if graphHolder is null
+	 * @throws NoSuchElementException if fromId or toId is not in graphHolder
 	 */
-	public Edge(int fromId, int toId) {
-		this(fromId, toId, null);
+	public Edge(int fromId, int toId, Graph graphHolder) {
+		this(fromId, toId, graphHolder, null);
 	}
 
 	/**
@@ -82,12 +111,19 @@ public class Edge implements Comparable<Edge>{
 	}
 
 	/**
+	 * @return the graph
+	 */
+	public Graph getGraph() {
+		return this.graphHolder;
+	}
+
+	/**
 	 * Returns a new edge with the same weight but reversed direction
 	 * 
 	 * @return a symmetric edge (from -> to becomes to -> from)
 	 */
-	public Edge getSymmetric() {
-		return new Edge(to, from, weight);
+	public Edge getSymetric() {
+		return new Edge(to, from, graphHolder, weight);
 	}
 
 	/**
@@ -139,7 +175,7 @@ public class Edge implements Comparable<Edge>{
 		}
 
 		Edge other = (Edge)obj;
-		return (this.from.equals(other.from) && this.to.equals(other.to) && this.weight.equals(other.weight));
+		return (this.from.equals(other.from) && this.to.equals(other.to) && this.weight == other.weight);
 	}
 
 	/**
@@ -166,6 +202,10 @@ public class Edge implements Comparable<Edge>{
 
 		if (this.to != o.to) {
 			return this.to.compareTo(o.to);
+		}
+
+		if (this.weight == null || o.weight == null) { //weight equal null
+			return 0;
 		}
 
 		return this.weight.compareTo(o.weight);
