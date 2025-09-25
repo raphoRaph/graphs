@@ -3,12 +3,23 @@ package m1graphs2025;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.junit.Before;
 
 public class NodeTest 
 {
   private Graph graph;
+	
+	private void expectException(Runnable r) {
+  	try {
+  		r.run();
+    	assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+  	}
+  }
 
-  void setUp() {
+	@Before
+  public void setUp() {
     graph = new Graph();
   }
   
@@ -22,11 +33,10 @@ public class NodeTest
   @Test
   public void testNullConstructors()
   {
-    /*
-    assertThrow(Exception.class, () -> {
-      new Node(-1, graph);
-    });
-    */
+		expectException(() -> new Node(-1, graph));
+		expectException(() -> new Node(1, null));
+		graph.addNode(1);
+		expectException(() -> new Node(1, graph));
   }
 
   @Test
@@ -46,7 +56,7 @@ public class NodeTest
     assertTrue(new Node(1, "1", graph).equals(new Node(1, "1", graph))); //same
     assertFalse(new Node(2, "1", graph).equals(new Node(1, "1", graph))); //id
     assertFalse(new Node(1, "1", graph).equals(new Node(1, "2", graph))); //name
-    assertFalse(new Node(1, "1", graph).equals(new Edge(1, 2))); //Other object
+    assertFalse(new Node(1, "1", graph).equals(1)); //Other object
   }
 
   @Test

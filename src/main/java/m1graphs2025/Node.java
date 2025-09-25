@@ -29,10 +29,18 @@ public class Node implements Comparable<Node>{
 	 * @param name				the display name of the node (may be empty, but not null)
 	 * @param graphHolder the graph that owns this node
 	 * @throws IllegalArgumentException if id <= 0
+	 * @throws NullPointerException if graphHolder is null
+	 * @throws IllegalArgumentException if id is already used
 	 */
 	public Node(int id, String name, Graph graphHolder) {
-		if (id < 1) {
+		if (id <= 0) {
 			throw new IllegalArgumentException("Node id must be higher than 0");
+		}
+		if (graphHolder == null) {
+			throw new NullPointerException("GraphHolder cannot be null");
+		}
+		if (graphHolder.usesNode(id)) {
+			throw new IllegalArgumentException("Graph does not contain node with id: " + id);
 		}
 		this.id = id;
 		this.name = name;
@@ -45,6 +53,8 @@ public class Node implements Comparable<Node>{
 	 * @param id					the unique identifier of the node, must be greate than 0
 	 * @param graphHolder the graph that owns this node
 	 * @throws IllegalArgumentException if id <= 0
+	 * @throws NullPointerException if graphHolder is null
+	 * @throws IllegalArgumentException if id is already used
 	 */
 	public Node(int id, Graph graphHolder) {
 		this(id, "", graphHolder);
