@@ -331,7 +331,7 @@ public class Graph {
 
 	// graph's representations and transformations //
 	public int[] toSuccessorArray(){
-		//return null;
+		return null;
 	}
 
 	public int[][] toAdjMatrix(){
