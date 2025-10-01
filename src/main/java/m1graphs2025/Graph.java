@@ -47,7 +47,7 @@ public class Graph {
 	}
 		
 	public boolean holdsNode(Node n){
-		return adjEdList.containsKey(n);
+		return n.getGraph() == this;
 	}
 
 	public Node getNode(int id){
@@ -60,11 +60,7 @@ public class Graph {
 	}
 
 	public boolean addNode(Node n){
-		if (usesNode(n)){
-			return false;
-		}
-		adjEdList.put(n, new ArrayList<Edge>());
-		return true;
+		return addNode(n.getId());
 	}
 
 	public boolean addNode(int nodeId) {
@@ -165,133 +161,189 @@ public class Graph {
 
 	// edge part //
 
-	private Edge getEdge(int fromId, int toId) {
-		for (Edge edge : adjEdList.get(getNode(fromId))) {
-			if (edge.from().getId() == fromId && edge.to().getId() == toId) {
-				return edge;
-			}
-		}
-		return null;
-	}
+    private Edge getEdge(int fromId, int toId){
+        for (Edge edge : adjEdList.get(getNode(fromId))){
+            if (edge.from().getId() == fromId && edge.to().getId() == toId){
+                return edge;
+            }
+        }
+        return null;
+    }
 
-	public int nbEdges() {
-		int count = 0;
-		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()) {
-			count += pair.getValue().size();
-		}						 
-		return count;
-	}
+    public int nbEdges(){
+        int count = 0;
+        for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+            count += pair.getValue().size();
+        }            
+        return count;
+    }
 
-	public boolean existsEdge(Node u, Node v) {
-		List<Edge> list = adjEdList.get(u);
-		for (Edge edge : list) {
-			if (edge.to() == v) {
-				return true;
-			}
-		}
-		return false;
-	}
-/*
-	//TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
-	public boolean existsEdge(int uId, int vId){
-		throw new NoImplementedExeption("not implemented");
-	}
+    public boolean existsEdge(Edge e){
+        List<Edge> list = adjEdList.get(e.from());
+        for (Edge edge : list){
+            if(edge.equals(e)){
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public boolean isMultiEdge(Node u, Node v){
-		int count = 0;
-		List<Edge> list = adjEdList.get(u);
-		for (Edge edge : list){
-			if (edge.to == v){
-				count ++;
-			}
-		}
-		return count >= 2;
-	}
+    public boolean existsEdge(Node u, Node v){
+        return existsEdge(u.getId(), v.getId());
+    }
 
-		//TODO, ne comprend pas le sujet "Overloaded versions will take as parameters integer node ids, as well as edge reference."
-		public boolean isMultiEdge(int uId, int vId){
-				throw new NoImplementedExeption("not implemented");
-		}
-*/
-	public void addEdge(Node from, Node to) {
-		//adjEdList.put(from, new Edge(from, to));
-	}
+    public boolean existsEdge(int uId, int vId){
+        List<Edge> list = adjEdList.get(getNode(uId));
+        for (Edge edge : list){
+            if(edge.to() == getNode(vId)){
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public void addEdge(int fromId, int toId){
-		//addEdge(getNode(fromId), getNode(toId));
-	}
-/*
-	public boolean removeEdge(Node from, Node to){
-		return adjEdList.get(from).remove(getEdge(from.getId(), to.getId()));
-	}
+    public boolean isMultiEdge(Edge e){
+        return isMultiEdge(e.from(), e.to());
+    }
+    
+    public boolean isMultiEdge(Node u, Node v){
+        return isMultiEdge(u.getId(), v.getId());
+    }
 
-	public boolean removeEdge(int fromId, int toId){
-		throw new NoImplementedExeption("not implemented");
-	}
+    public boolean isMultiEdge(int uId, int vId){
+        int count = 0;
+        List<Edge> list = adjEdList.get(getNode(uId));
+        for (Edge edge : list){
+            if (edge.to() == getNode(vId)){
+                count ++;
+            }
+        }
+        return count >= 2;
+    }
 
-	public List<Edge> getOutEdges(Node n){
-		return getOutEdges(n.getId());
-	}
+    private void addEdge(int fromId, int toId, Integer weight){
+        addNodeIfAbsent(fromId);
+        addNodeIfAbsent(toId);
+        Node from = getNode(fromId);
+        Node to = getNode(toId);
 
-	public List<Edge> getOutEdges(int nodeId){
-		return adjEdList.get(getNode(nodeId));
-	}
+        adjEdList.get(from).add(new Edge(from, to, this, weight));
+    }
 
-	public List<Edge> getInEdges(Node n){
-		return getInEdges(n.getId());
-	}
+    public void addEdge(Edge e){
+        addEdge(e.from().getId(), e.to().getId(), e.getWeight());
+    }
 
-	public List<Edge> getInEdges(int nodeId){
-		List<Edge> lst = new ArrayList<Edge>();
-		for (adjEdList.Entry<Node, List<Edge>> pair : adjEdList.entySet()){
-			for (Edge edge : pair.getValue()){
-				if(edge.to().getId() == nodeId){
-					lst.add(edge);
-				}
-			}
-		}
-		return lst;
-	}
+    public void addEdge(Node from, Node to){
+        addEdge(from.getId(), to.getId());
+    }
+    
+    public void addEdge(int fromId, int toId){
+        addEdge(fromId, toId, null);
+    }
 
-	public List<Edge> getIncidentEdges(Node n){
-		return getIncidentEdges(n.getId());
-	}
 
-	public List<Edge> getIncidentEdges(int nodeId){
-		List<Edge> lst = getOutEdges(nodeId);
-		for (Edge edge : getInEdges(nodeId)){
-			lst.add(edge);
-		}
-		return lst;
-	}
 
-	public List<Edge> getEdges(Node u, Node v){
-	}
+    public boolean removeEdge(Edge e){
+        return removeEdge(e.from(), e.to(), e.getWeight());
+    }
+    
+    public boolean removeEdge(Node from, Node to){
+        return removeEdge(from.getId(), to.getId());
+    }
 
-	public List<Edge> getAllEdges(){
-		List<Edge> lst = new ArrayList<Edge>();
-		for (adjEdList.Entry<Node, List<Edge>> pair : adjEdList.entySet()){
-			for (Edge edge : pair.getValue()){
-				lst.add(edge);
-			}
-		}
-		return lst;
-	}
-*/
-/*
+    public boolean removeEdge(Node from, Node to, Integer weight){
+        return removeEdge(from.getId(), to.getId(), weight);
+    }
+    
+    public boolean removeEdge(int fromId, int toId){
+        Node from = getNode(fromId);
+        return adjEdList.get(from).remove(getEdge(fromId, toId));
+    }
+
+    public boolean removeEdge(int fromId, int toId, Integer weight){
+        Node from = getNode(fromId);
+        List<Edge> lst = getEdges(from, getNode(toId));
+        for(Edge edge : lst){
+            if (edge.getWeight() == weight){
+                return adjEdList.get(from).remove(edge);
+            }
+        }
+        return false;
+    }
+
+    public List<Edge> getOutEdges(Node n){
+        return getOutEdges(n.getId());
+    }
+
+    public List<Edge> getOutEdges(int nodeId){
+        return adjEdList.get(getNode(nodeId));
+    }
+
+    public List<Edge> getInEdges(Node n){
+        return getInEdges(n.getId());
+    }
+
+    public List<Edge> getInEdges(int nodeId){
+        List<Edge> lst = new ArrayList<Edge>();
+        for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+            for (Edge edge : pair.getValue()){
+                if(edge.to().getId() == nodeId){
+                    lst.add(edge);
+                }
+            }
+        }
+        return lst;
+    }
+
+    public List<Edge> getIncidentEdges(Node n){
+        return getIncidentEdges(n.getId());
+    }
+
+    public List<Edge> getIncidentEdges(int nodeId){
+        List<Edge> lst = getOutEdges(nodeId);
+        for (Edge edge : getInEdges(nodeId)){
+            lst.add(edge);
+        }
+        return lst;
+    }
+
+    public List<Edge> getEdges(Node u, Node v){
+        List<Edge> lst = new ArrayList<Edge>();
+        for (Edge edge : adjEdList.get(u)){
+            if (edge.from() == u && edge.to() == v){
+                lst.add(edge);
+            }
+        }
+        return lst;
+    }
+
+    public List<Edge> getAllEdges(){
+        List<Edge> lst = new ArrayList<Edge>();
+        for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+            for (Edge edge : pair.getValue()){
+                lst.add(edge);
+            }
+        }
+        return lst;
+    }
+
 
 	// graph's representations and transformations //
 	public int[] toSuccessorArray(){
-		return -1;
+		return null;
 	}
 
 	public int[][] toAdjMatrix(){
+        return null;
 	}
 
 	public Graph getReverse(){
+        return null;
 	}
 
 	public Graph getTransitiveClosure(){
+        return null;
 	}
 
 	public boolean isMultiGraph(){
@@ -307,16 +359,11 @@ public class Graph {
 	}
 
 	public Graph copy(){
-	}
-
-	public boolean hasSelfLoops(){
-		return true;
-	}
-	
-	public Graph copy(){
+        return null;
 	}
 	
 	// Graph traversal //
+    /*
 	public List<Node> getDFS(){
 	}
 
@@ -349,5 +396,5 @@ public class Graph {
 
 	public void toDotFile(String fileName, String extension){
 	}
-*/
+    */
 }
