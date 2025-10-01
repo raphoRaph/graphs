@@ -14,10 +14,10 @@ public class Graph {
 		adjEdList = new HashMap<>();
 		int idFrom = 1;
 		for (int idTo : nodes) {
+			addNodeIfAbsent(idFrom);
 			if (idTo == 0) {
 				idFrom++;
 			} else {
-				addNodeIfAbsent(idFrom);
 				addNodeIfAbsent(idTo);
 				addEdge(idFrom, idTo);
 			}
