@@ -60,6 +60,10 @@ public class Node implements Comparable<Node>{
 		this(id, "", graphHolder);
 	}
 
+	public String toString(){
+		return this.id.toString();
+	}
+
 	/**
 	 * @retrun the node's unique identifier
 	 */

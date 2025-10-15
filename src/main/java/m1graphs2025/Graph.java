@@ -29,6 +29,17 @@ public class Graph {
 	}
 	// Node part //
 
+	public String toString(){
+		String res = "";
+		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+			res += "\n" + pair.getKey().toString() + " : \n\t";
+			for (Edge edge : adjEdList.get(pair.getKey())){
+				res += edge.to().toString() + ", ";
+			}
+		}
+		return res;
+	}
+
 	public int nbNodes() {
 		return adjEdList.size();
 	}
@@ -237,12 +248,14 @@ public class Graph {
     public void addEdge(Node from, Node to){
         addEdge(from.getId(), to.getId());
     }
+
+	public void addEdge(Node from, Node to, Integer weight){
+        addEdge(from.getId(), to.getId(), weight);
+    }
     
     public void addEdge(int fromId, int toId){
         addEdge(fromId, toId, null);
     }
-
-
 
     public boolean removeEdge(Edge e){
         return removeEdge(e.from(), e.to(), e.getWeight());
@@ -330,36 +343,106 @@ public class Graph {
 
 
 	// graph's representations and transformations //
+
+	public static int[] convertIntegers(List<Integer> integers){
+		int[] ret = new int[integers.size()];
+		for (int i=0; i < ret.length; i++)
+		{
+			ret[i] = integers.get(i).intValue();
+		}
+    	return ret;
+	}
+
 	public int[] toSuccessorArray(){
-		return null;
+		List<int> myList = new ArrayList<int>();		
+		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+			myList.add(pair.getKey().getId());
+		}
+		Collections.sort(myList);
+		
+		List<int> res = new ArrayList<>();
+		int count = 0;
+		for (int i = 1; i < myList.get(myList.size()-1); i++){
+			if (i == myList.get(count)){
+				for (Edge edge : adjEdList.get(getNode(i))){
+					res.add(edge.to().getId())
+				}
+				count++
+			}
+			res.add(0);
+		}
+		return convertIntegers(res);
 	}
 
 	public int[][] toAdjMatrix(){
-        return null;
+		int maxNode = largestNodeId();
+		int[][] res = new int[maxNode][maxNode];
+		for (int i = 0; i < maxNode; i++){
+			for (int j = 0; j < maxNode; j++){
+				res[i][j] = 0;
+			}
+		}
+
+		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
+			for (Edge edge : adjEdList.get(pair.getKey())){
+				res[edge.from().getId()][edge.to().getId()]++;
+			}
+		}
+        return res;
 	}
 
 	public Graph getReverse(){
-        return null;
+        Graph graph = new Graph();
+		for (Edge edge : getAllEdges()) {
+			graph.addEdge(edge.to(), edge.from(), edge.getWeight());
+		}
+		return graph;
 	}
 
 	public Graph getTransitiveClosure(){
-        return null;
+		Graph graph = copy();
+
+		for (Node from : adjEdList.keySet()) {
+			for (Node to : adjEdList.keySet()) {
+				for (Node inter : adjEdList.keySet()) {
+					if(!existsEdge(from, to) && existsEdge(from, inter) && existsEdge(inter, to)){
+						graph.addEdge(from, to);
+					}
+				}
+			}
+		}
+
+        return graph;
 	}
 
 	public boolean isMultiGraph(){
-		return true;
+		for (Edge edge : getAllEdges()) {
+			if (edge.isMultiEdge()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isSimpleGraph(){
-		return true;
+		return !isMultiGraph();
 	}
 
 	public boolean hasSelfLoops(){
-		return true;
+		for (Edge edge : getAllEdges()) {
+			if (edge.isSelfLoop()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Graph copy(){
-        return null;
+		Graph graph = new Graph();
+		for (Edge edge : getAllEdges()) {
+			graph.addEdge(edge.from(), edge.to(), edge.getWeight());
+		}
+		return graph;
 	}
 	
 	// Graph traversal //
