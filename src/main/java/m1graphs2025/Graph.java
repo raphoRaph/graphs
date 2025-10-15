@@ -4,6 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+import jdk.nashorn.internal.ir.Node;
+
 import java.util.HashMap;
 
 public class Graph {
@@ -232,6 +237,7 @@ public class Graph {
         return count >= 2;
     }
 
+	// TODO why we add the nodes if node is absent ?
     private void addEdge(int fromId, int toId, Integer weight){
         addNodeIfAbsent(fromId);
         addNodeIfAbsent(toId);
@@ -274,6 +280,7 @@ public class Graph {
         return adjEdList.get(from).remove(getEdge(fromId, toId));
     }
 
+	// why remove all edges ?
     public boolean removeEdge(int fromId, int toId, Integer weight){
         Node from = getNode(fromId);
         List<Edge> lst = getEdges(from, getNode(toId));
@@ -456,15 +463,15 @@ public class Graph {
 	}
 
 	public List<Node> getDFS(int id){
-		List<Node> lst = new ArrayList();
+		Set<Node> lst = new Set<Node>();
 		getDFS(id, lst);
-		return lst;
+		return new ArrayList<>(lst);
 	}
 
-	private void getDFS(int id, List<Node> lst){
+	private void getDFS(int id, Set<Node> lst){
 		for (Node node : getSuccessors(getNode(id))) {
-			getDFS(node.getId(), lst);
 			lst.add(node);
+			getDFS(node.getId(), lst);
 		}
 		return ;
 	}
@@ -479,17 +486,20 @@ public class Graph {
 
 	public List<Node> getBFS(int id){
 		List<Node> lst = new ArrayList();
-		getBFS(id, lst);
+		Queue<Node> queue = new Queue<Node>();
+		queue.add(getNode(id))
+		while (queue.peek() != null) {
+			Node currNode = queue.remove();
+			for (Node node : getSuccessors(currNode)) {
+				if (!lst.contains(node)) {
+					lst.add(node)
+					queue.add(node)
+				}
+			}
+		}
 		return lst;
 	}
 
-	private void getBFS(int id, List<Node> lst){
-		for (Node node : getSuccessors(getNode(id))) {
-			lst.add(node);
-			getDFS(node.getId(), lst);
-		}
-		return ;
-	}
   /*
 	public List<Node> getDFSWithVisitInfo(Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit){
 	}
