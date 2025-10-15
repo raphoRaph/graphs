@@ -394,7 +394,7 @@ public class Graph {
 	public Graph getReverse(){
         Graph graph = new Graph();
 		for (Edge edge : getAllEdges()) {
-			graph.addEdge(edge.to(), edge.from(), edge.getWeight());
+			graph.addEdge(edge.getSymetric());
 		}
 		return graph;
 	}
@@ -446,24 +446,58 @@ public class Graph {
 	}
 	
 	// Graph traversal //
-    /*
+  
 	public List<Node> getDFS(){
+		return getDFS(smallestNodeId());
 	}
 
 	public List<Node> getDFS(Node u){
+		return getDFS(u.getId());
+	}
+
+	public List<Node> getDFS(int id){
+		List<Node> lst = new ArrayList();
+		getDFS(id, lst);
+		return lst;
+	}
+
+	private void getDFS(int id, List<Node> lst){
+		for (Node node : getSuccessors(getNode(id))) {
+			getDFS(node.getId(), lst);
+			lst.add(node);
+		}
+		return ;
 	}
 
 	public List<Node> getBFS(){
+		return getBFS(smallestNodeId())
 	}
 
 	public List<Node> getBFS(Node u){
+		return getBFS(u.getId())
 	}
 
+	public List<Node> getBFS(int id){
+		List<Node> lst = new ArrayList();
+		getBFS(id, lst);
+		return lst;
+	}
+
+	private void getBFS(int id, List<Node> lst){
+		for (Node node : getSuccessors(getNode(id))) {
+			lst.add(node);
+			getDFS(node.getId(), lst);
+		}
+		return ;
+	}
+  /*
 	public List<Node> getDFSWithVisitInfo(Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit){
 	}
 
 	public List<Node> getDFSWithVisitInfo(Node u, Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit){
 	}
+
+	// Graph Import and Export //
 
 	public static Graph fromDotFile(String filename){
 	}
