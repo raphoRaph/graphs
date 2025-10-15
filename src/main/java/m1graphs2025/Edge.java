@@ -135,11 +135,14 @@ public class Edge implements Comparable<Edge>{
 		return from == to;
 	}
 
-	/**
-	 * TODO
-	 */
+	
+  /**
+   * Checks if this edge is a multiedge (another edge exists from same source to same target)
+	 *
+	 * @return true if this edge have a same other one, false otherwise
+   */
 	public boolean isMultiEdge() {
-		throw new UnsupportedOperationException("Not implemented");
+		return graphHolder.getOutEdges(from).stream().filter(e -> e.to().equals(to)).count() > 1;
 	}
 
 	/**

@@ -1,13 +1,9 @@
 package m1graphs2025;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.function.Function;
 
 /**
  * This class represents a node (vertex) in a graph
@@ -17,7 +13,7 @@ import java.util.function.Function;
  * @see Graph
  * @see Edge
  */
-public class Node implements Comparable<Node>{
+public class Node implements Comparable<Node> {
 	private final int id;
 	private final String name;
 	private Graph graphHolder;
@@ -25,11 +21,11 @@ public class Node implements Comparable<Node>{
 	/**
 	 * Creates a new node
 	 *
-	 * @param id					the unique identifier of the node, must be greater than 0
-	 * @param name				the display name of the node (may be empty, but not null)
+	 * @param id          the unique identifier of the node, must be greater than 0
+	 * @param name        the display name of the node (may be empty, but not null)
 	 * @param graphHolder the graph that owns this node
 	 * @throws IllegalArgumentException if id <= 0
-	 * @throws NullPointerException if graphHolder is null
+	 * @throws NullPointerException     if graphHolder is null
 	 * @throws IllegalArgumentException if id is already used
 	 */
 	public Node(int id, String name, Graph graphHolder) {
@@ -48,12 +44,12 @@ public class Node implements Comparable<Node>{
 	}
 
 	/**
-	 *	Creates a new node with an empty name
+	 * Creates a new node with an empty name
 	 *
-	 * @param id					the unique identifier of the node, must be greate than 0
+	 * @param id          the unique identifier of the node, must be greate than 0
 	 * @param graphHolder the graph that owns this node
 	 * @throws IllegalArgumentException if id <= 0
-	 * @throws NullPointerException if graphHolder is null
+	 * @throws NullPointerException     if graphHolder is null
 	 * @throws IllegalArgumentException if id is already used
 	 */
 	public Node(int id, Graph graphHolder) {
@@ -61,7 +57,7 @@ public class Node implements Comparable<Node>{
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return "" + this.id;
 	}
 
@@ -85,14 +81,14 @@ public class Node implements Comparable<Node>{
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * Gets all unique successors of this node (nodes reachable via outgoind edges)
 	 *
 	 * @return a list of distinct successor nodes
 	 */
 	public List<Node> getSuccessors() {
-		return getOutEdges().stream().map(Edge::to).distinct().toList();
+		return graphHolder.getSuccessors(this);
 	}
 
 	/**
@@ -102,7 +98,7 @@ public class Node implements Comparable<Node>{
 	 * @return a list of successor nodes, possibly with duplicates
 	 */
 	public List<Node> getSuccessorsMulti() {
-		return getOutEdges().stream().map(Edge::to).collect(Collectors.toList());
+		return graphHolder.getSuccessorsMulti(this);
 	}
 
 	/**
@@ -113,10 +109,7 @@ public class Node implements Comparable<Node>{
 	 * @throws NullPointerException if u is null
 	 */
 	public boolean adjacent(Node u) {
-		if (u == null) {
-			throw new NullPointerException("Node must be initialize");
-		}
-		return adjacent(u.getId());
+		return graphHolder.adjacent(this, u);
 	}
 
 	/**
@@ -127,59 +120,49 @@ public class Node implements Comparable<Node>{
 	 * @throws IllegalArgumentException if nodeId <= 0
 	 */
 	public boolean adjacent(int nodeId) {
-		if (nodeId <= 0) {
-			throw new IllegalArgumentException("Node ID must be higher than 0");
-		}
-
-		for (Edge e : getOutEdges()) {
-			if (e.to().getId() == nodeId) {
-				return true;
-			}
-		}
-		return false;
+		return graphHolder.adjacent(this.getId(), nodeId);
 	}
 
 	/**
 	 * @return the number of incoming edges of this node
 	 */
 	public int inDegree() {
-		return getInEdges().size();
+		return graphHolder.inDegree(this);
 	}
 
 	/**
 	 * @return the number of outgoing edges of this node
 	 */
 	public int outDegree() {
-		return getOutEdges().size();
+		return graphHolder.outDegree(this);
 	}
 
 	/**
-	 *	@return the total degree (sum of in-degree and out-degree) of this node
+	 * @return the total degree (sum of in-degree and out-degree) of this node
 	 */
 	public int degree() {
-		return inDegree() + outDegree();
+		return graphHolder.degree(this);
 	}
 
 	/**
 	 * @return a list of outgoing edges from this node
 	 */
 	public List<Edge> getOutEdges() {
-		return getEdges(Edge::to);
+		return graphHolder.getOutEdges(this);
 	}
 
 	/**
-	 * @return a list of incoming edges to this node 
+	 * @return a list of incoming edges to this node
 	 */
 	public List<Edge> getInEdges() {
-		return getEdges(Edge::from);
+		return graphHolder.getInEdges(this);
 	}
 
 	/**
 	 * @return a list of all incident edges (incoming + outgoing)
 	 */
 	public List<Edge> getIncidentEdges() {
-		return new ArrayList<Edge>();
-//		return getOutEdges().addAll(getInEdges());
+		return graphHolder.getIncidentEdges(this);
 	}
 
 	/**
@@ -203,29 +186,7 @@ public class Node implements Comparable<Node>{
 		if (nodeId <= 0) {
 			throw new IllegalArgumentException("Node ID must be higher than 0");
 		}
-		List<Edge> result = new ArrayList<Edge>();
-		for (Edge e : getOutEdges()) {
-			if (e.to().getId() == nodeId) {
-				result.add(e);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Helper method to get edges associated with this node, depending on a selector function
-	 *
-	 * @param selector a function mapping an edge to one of its endpoints
-	 * @return a list of edges where selector.apply(edge) == this
-	 */
-	private List<Edge> getEdges(Function<Edge, Node> selector) {
-		List<Edge> result = new ArrayList<Edge>();
-		//for (Edge e : graphHolder.getEdges()) {
-		//	if (selector.apply(e).equals(this)) {
-		//		result.add(e);
-		//	}
-		//}
-		return result;
+		return getOutEdges().stream().filter(e -> e.to().getId() == nodeId).toList();
 	}
 
 	/**
@@ -246,7 +207,7 @@ public class Node implements Comparable<Node>{
 			return false;
 		}
 
-		Node other = (Node)obj;
+		Node other = (Node) obj;
 		return (this.id == other.id && this.name.equals(other.name));
 	}
 
@@ -262,7 +223,8 @@ public class Node implements Comparable<Node>{
 	 * Compares this node to another node by ID
 	 *
 	 * @param o the other node
-	 * @return a negative integer, zero, or a positive integer if this node's ID is less than, equal to, or greater than o's ID
+	 * @return a negative integer, zero, or a positive integer if this node's ID is
+	 *         less than, equal to, or greater than o's ID
 	 */
 	@Override
 	public int compareTo(Node o) {
