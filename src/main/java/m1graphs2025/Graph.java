@@ -1,17 +1,14 @@
 package m1graphs2025;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 public class Graph {
 	private final Map<Node, List<Edge>> adjEdList;
@@ -89,7 +86,7 @@ public class Graph {
 		if (usesNode(nodeId)) {
 			return false;
 		}
-		adjEdList.put(new Node(nodeId, this), new ArrayList<Edge>());
+		adjEdList.put(new Node(nodeId, this), new ArrayList<>());
 		return true;
 	}
 
@@ -117,7 +114,7 @@ public class Graph {
 	}
 
 	public List<Node> getAllNodes(){
-		List<Node> nodeList = new ArrayList<Node>();
+		List<Node> nodeList = new ArrayList<>();
 		nodeList.addAll(adjEdList.keySet());
 		return nodeList;
 	}
@@ -308,7 +305,7 @@ public class Graph {
     }
 
     public List<Edge> getInEdges(int nodeId){
-        List<Edge> lst = new ArrayList<Edge>();
+        List<Edge> lst = new ArrayList<>();
         for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
             for (Edge edge : pair.getValue()){
                 if(edge.to().getId() == nodeId){
@@ -332,7 +329,7 @@ public class Graph {
     }
 
     public List<Edge> getEdges(Node u, Node v){
-        List<Edge> lst = new ArrayList<Edge>();
+        List<Edge> lst = new ArrayList<>();
         for (Edge edge : adjEdList.get(u)){
             if (edge.from() == u && edge.to() == v){
                 lst.add(edge);
@@ -342,7 +339,7 @@ public class Graph {
     }
 
     public List<Edge> getAllEdges(){
-        List<Edge> lst = new ArrayList<Edge>();
+        List<Edge> lst = new ArrayList<>();
         for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
             for (Edge edge : pair.getValue()){
                 lst.add(edge);
@@ -358,7 +355,7 @@ public class Graph {
 		int[] ret = new int[integers.size()];
 		for (int i=0; i < ret.length; i++)
 		{
-			ret[i] = integers.get(i).intValue();
+			ret[i] = integers.get(i);
 		}
     	return ret;
 	}
@@ -581,7 +578,6 @@ public class Graph {
 	}
 
 	public void toDotFile(String fileName){
-		return;
 	}
 
 	public void toDotFile(String fileName, String extension){
