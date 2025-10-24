@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
@@ -373,7 +375,6 @@ public class Graph {
 	}
 
 	// graph's representations and transformations //
-
 	public static int[] convertIntegers(List<Integer> integers) {
 		int[] ret = new int[integers.size()];
 		for (int i = 0; i < ret.length; i++) {

@@ -4,14 +4,16 @@ import java.util.Objects;
 import java.util.NoSuchElementException;
 
 /**
- * This class represents a directed edge between two Node objects in a graph structure
+ * This class represents a directed edge between two Node objects in a graph
+ * structure
  * 
- * An edge connects a source node ("from") to a target node ("to") and it may optionally have an associated weight
+ * An edge connects a source node ("from") to a target node ("to") and it may
+ * optionally have an associated weight
  * 
  * @see Node
  * @see Graph
  */
-public class Edge implements Comparable<Edge>{
+public class Edge implements Comparable<Edge> {
 	private Node from;
 	private Node to;
 	private Integer weight;
@@ -20,13 +22,13 @@ public class Edge implements Comparable<Edge>{
 	/**
 	 * Constructs a directed edge between two nodes with an optional weight
 	 *
-	 * @param from	 the source node (must not be null)
-	 * @param to		 the target node (must not be null)
+	 * @param from        the source node (must not be null)
+	 * @param to          the target node (must not be null)
 	 * @param graphHolder the graph that owns this edge
-	 * @param weight the wieght of the edge, or null for unweighted
+	 * @param weight      the wieght of the edge, or null for unweighted
 	 * @throws IllegalArgumentException if from or to is null or graphHolder is null
-	 * @throws NullPointerException if graphHolder is null
-	 * @throws NoSuchElementException if fromId or toId is not in graphHolder
+	 * @throws NullPointerException     if graphHolder is null
+	 * @throws NoSuchElementException   if fromId or toId is not in graphHolder
 	 */
 	public Edge(Node from, Node to, Graph graphHolder, Integer weight) {
 		if (from == null || to == null) {
@@ -48,7 +50,7 @@ public class Edge implements Comparable<Edge>{
 	 * Constructs an unweighted directed edge between two nodes
 	 *
 	 * @param from the sorce node (must not be null)
-	 * @param to the target node (must not be null)
+	 * @param to   the target node (must not be null)
 	 * @throws IllegalArgumentException if from or to is null
 	 */
 	public Edge(Node from, Node to, Graph graphHolder) {
@@ -57,14 +59,16 @@ public class Edge implements Comparable<Edge>{
 
 	/**
 	 * Constructs a directed edge from node IDs with an optional weight
+	 * 
+	 * @choise why reject node not in graph
 	 *
-	 * @param fromId the ID of the source node
-	 * @param toId	 the ID of the target node
-	 * @param graphHolder the graph that owns this edge 
-	 * @param weight thie weight of the edge, or null for unweighted
+	 * @param fromId      the ID of the source node
+	 * @param toId        the ID of the target node
+	 * @param graphHolder the graph that owns this edge
+	 * @param weight      thie weight of the edge, or null for unweighted
 	 * @throws IllegalArgumentException if fromId or toId <= 0
-	 * @throws NullPointerException if graphHolder is null
-	 * @throws NoSuchElementException if fromId or toId is not in graphHolder
+	 * @throws NullPointerException     if graphHolder is null
+	 * @throws NoSuchElementException   if fromId or toId is not in graphHolder
 	 */
 	public Edge(int fromId, int toId, Graph graphHolder, Integer weight) {
 		if (fromId <= 0 || toId <= 0) {
@@ -85,12 +89,12 @@ public class Edge implements Comparable<Edge>{
 	/**
 	 * Constructs an unweighted directed edge from node IDs
 	 *
-	 * @param fromId the ID of the source node
-	 * @param toId	 the ID of the target node
+	 * @param fromId      the ID of the source node
+	 * @param toId        the ID of the target node
 	 * @param graphHolder the graph that owns this edge
 	 * @throws IllegalArgumentException if fromId or toId <= 0
-	 * @throws NullPointerException if graphHolder is null
-	 * @throws NoSuchElementException if fromId or toId is not in graphHolder
+	 * @throws NullPointerException     if graphHolder is null
+	 * @throws NoSuchElementException   if fromId or toId is not in graphHolder
 	 */
 	public Edge(int fromId, int toId, Graph graphHolder) {
 		this(fromId, toId, graphHolder, null);
@@ -135,12 +139,12 @@ public class Edge implements Comparable<Edge>{
 		return from == to;
 	}
 
-	
-  /**
-   * Checks if this edge is a multiedge (another edge exists from same source to same target)
+	/**
+	 * Checks if this edge is a multiedge (another edge exists from same source to
+	 * same target)
 	 *
 	 * @return true if this edge have a same other one, false otherwise
-   */
+	 */
 	public boolean isMultiEdge() {
 		return graphHolder.getOutEdges(from).stream().filter(e -> e.to().equals(to)).count() > 1;
 	}
@@ -162,7 +166,8 @@ public class Edge implements Comparable<Edge>{
 	/**
 	 * Compares this edge to another object for equality
 	 *
-	 * Two edges are considerd equal if they have the same source node, targe node, and weight
+	 * Two edges are considerd equal if they have the same source node, targe node,
+	 * and weight
 	 *
 	 * @param obj the object to comapre
 	 * @return true if obj is an Edge with the same properties
@@ -177,7 +182,7 @@ public class Edge implements Comparable<Edge>{
 			return false;
 		}
 
-		Edge other = (Edge)obj;
+		Edge other = (Edge) obj;
 		return (this.from.equals(other.from) && this.to.equals(other.to) && this.weight == other.weight);
 	}
 
@@ -195,7 +200,8 @@ public class Edge implements Comparable<Edge>{
 	 * The comparison is performed in the followind order : source, target, weight
 	 *
 	 * @param o the other edge
-	 * @return a negative integer, zero, or a positive integer as ths edge is less than, equal to, or greated than the specified edge
+	 * @return a negative integer, zero, or a positive integer as ths edge is less
+	 *         than, equal to, or greated than the specified edge
 	 */
 	@Override
 	public int compareTo(Edge o) {
@@ -207,7 +213,7 @@ public class Edge implements Comparable<Edge>{
 			return this.to.compareTo(o.to);
 		}
 
-		if (this.weight == null || o.weight == null) { //weight equal null
+		if (this.weight == null || o.weight == null) { // weight equal null
 			return 0;
 		}
 

@@ -3,12 +3,13 @@ package m1graphs2025;
 
 import static org.junit.Assert.*;
 
+import java.util.NoSuchElementException;
+
 import org.junit.Test;
 import org.junit.Before;
 
-public class EdgeTest 
-{
-  private Graph graph;
+public class EdgeTest {
+	private Graph graph;
 	private Node node1;
 	private Node node2;
 
@@ -19,28 +20,28 @@ public class EdgeTest
 		} catch (Exception e) {
 			assertTrue(true);
 		}
-  }
+	}
 
 	@Before
-  public void setUp() {
+	public void setUp() {
 		graph = new Graph();
 		node1 = new Node(1, graph);
 		node2 = new Node(2, graph);
 		graph.addNode(node1);
 		graph.addNode(node2);
 		graph.addNode(3);
-  }
-  
-  @Test
-  public void testAllConstructors() {
+	}
+
+	@Test
+	public void testAllConstructors() {
 		new Edge(node1, node2, graph, 1);
 		new Edge(node1, node2, graph);
 		new Edge(1, 2, graph, 1);
 		new Edge(1, 2, graph);
-  }
+	}
 
-  @Test
-  public void testNullConstructors() {
+	@Test
+	public void testNullConstructors() {
 		expectException(() -> new Edge(null, node1, graph));
 		expectException(() -> new Edge(node1, null, graph));
 		expectException(() -> new Edge(-1, 1, graph));
@@ -54,48 +55,47 @@ public class EdgeTest
 		expectException(() -> new Edge(1, -1, graph, 1));
 		expectException(() -> new Edge(1, 0, graph, 1));
 		expectException(() -> new Edge(1, 1, null, 1));
-  }
-	
-  @Test
-  public void testGetters() {
+	}
+
+	@Test
+	public void testGetters() {
 		Edge edge = new Edge(1, 2, graph);
 		assertTrue(edge.from().getId() == 1);
 		assertTrue(edge.to().getId() == 2);
 		assertTrue(edge.getGraph() == graph);
-  }
+	}
 
-
-  @Test
-  public void testSymetricNotWeighted() {
+	@Test
+	public void testSymetricNotWeighted() {
 		Edge edge = new Edge(1, 2, graph);
 		Edge sym = edge.getSymetric();
 		assertTrue(sym.from().getId() == 2);
 		assertTrue(sym.to().getId() == 1);
 		assertFalse(sym.isWeighted());
 		assertTrue(sym.getWeight() == null);
-  }
+	}
 
-  @Test
-  public void testSymetricWeighted() {
+	@Test
+	public void testSymetricWeighted() {
 		Edge edge = new Edge(1, 2, graph, 1);
 		Edge sym = edge.getSymetric();
 		assertTrue(sym.from().getId() == 2);
 		assertTrue(sym.to().getId() == 1);
 		assertTrue(sym.isWeighted());
 		assertTrue(sym.getWeight() == 1);
-  } 
+	}
 
-  @Test
-  public void testShelfLoop() {
+	@Test
+	public void testShelfLoop() {
 		Edge edge = new Edge(1, 1, graph);
 		assertTrue(edge.isSelfLoop());
-  }
+	}
 
-  @Test
-  public void testNotSelfLoop() {
+	@Test
+	public void testNotSelfLoop() {
 		Edge edge = new Edge(1, 2, graph);
 		assertFalse(edge.isSelfLoop());
-  }
+	}
 
 	@Test
 	public void testIsMultiedge_SingleEdge() {
@@ -162,42 +162,61 @@ public class EdgeTest
 		assertTrue(e2.isMultiEdge());
 	}
 
-  @Test
-  public void testEquals() {
-		assertTrue(new Edge(1, 2, graph).equals(new Edge(1, 2, graph))); //Equals
+	@Test
+	public void testEquals() {
+		assertTrue(new Edge(1, 2, graph).equals(new Edge(1, 2, graph))); // Equals
 		assertTrue(new Edge(1, 2, graph, 1).equals(new Edge(1, 2, graph, 1))); // Equals
-		assertFalse(new Edge(1, 2, graph).equals(new Edge(1, 1, graph))); //To diff
-		assertFalse(new Edge(1, 2, graph, 1).equals(new Edge(1, 1, graph, 1))); //To diff
-		assertFalse(new Edge(1, 2, graph).equals(new Edge(3, 2, graph))); //From diff
-		assertFalse(new Edge(1, 2, graph, 1).equals(new Edge(3, 2, graph, 1))); //From diff
-		assertFalse(new Edge(1, 2, graph, 1).equals(new Edge(1, 2, graph, 3))); //Weight diff
+		assertFalse(new Edge(1, 2, graph).equals(new Edge(1, 1, graph))); // To diff
+		assertFalse(new Edge(1, 2, graph, 1).equals(new Edge(1, 1, graph, 1))); // To diff
+		assertFalse(new Edge(1, 2, graph).equals(new Edge(3, 2, graph))); // From diff
+		assertFalse(new Edge(1, 2, graph, 1).equals(new Edge(3, 2, graph, 1))); // From diff
+		assertFalse(new Edge(1, 2, graph, 1).equals(new Edge(1, 2, graph, 3))); // Weight diff
 		Edge edge = new Edge(1, 2, graph);
 		assertTrue(edge.equals(edge));
 		assertFalse(edge.equals(1));
-  }
+	}
 
-  @Test
-  public void testCompareTo() {
-		assertTrue(new Edge(1, 2, graph).compareTo(new Edge(1, 2, graph)) == 0); //Equals all
-		assertTrue(new Edge(1, 2, graph).compareTo(new Edge(2, 2, graph)) < 0); //Lower from
-		assertTrue(new Edge(3, 2, graph).compareTo(new Edge(2, 2, graph)) > 0); //Higher from
-		assertTrue(new Edge(1, 1, graph).compareTo(new Edge(1, 2, graph)) < 0); //Lower to
-		assertTrue(new Edge(1, 3, graph).compareTo(new Edge(1, 2, graph)) > 0); //Higher to
-		assertTrue(new Edge(1, 2, graph, 0).compareTo(new Edge(1, 2, graph, 1)) < 0); //Lower weight
-		assertTrue(new Edge(1, 2, graph, 1).compareTo(new Edge(1, 2, graph, 0)) > 0); //Higher weight
-  }
+	@Test
+	public void testCompareTo() {
+		assertTrue(new Edge(1, 2, graph).compareTo(new Edge(1, 2, graph)) == 0); // Equals all
+		assertTrue(new Edge(1, 2, graph).compareTo(new Edge(2, 2, graph)) < 0); // Lower from
+		assertTrue(new Edge(3, 2, graph).compareTo(new Edge(2, 2, graph)) > 0); // Higher from
+		assertTrue(new Edge(1, 1, graph).compareTo(new Edge(1, 2, graph)) < 0); // Lower to
+		assertTrue(new Edge(1, 3, graph).compareTo(new Edge(1, 2, graph)) > 0); // Higher to
+		assertTrue(new Edge(1, 2, graph, 0).compareTo(new Edge(1, 2, graph, 1)) < 0); // Lower weight
+		assertTrue(new Edge(1, 2, graph, 1).compareTo(new Edge(1, 2, graph, 0)) > 0); // Higher weight
+		assertTrue(new Edge(1, 2, graph).compareTo(new Edge(1, 2, graph, 0)) == 0); // Higher weight
+		assertTrue(new Edge(1, 2, graph, 1).compareTo(new Edge(1, 2, graph)) == 0); // Higher weight
+	}
 
-  @Test 
-  public void testWeight() {
+	@Test
+	public void testWeight() {
 		Edge edge = new Edge(1, 2, graph, 1);
 		assertTrue(edge.isWeighted());
 		assertTrue(edge.getWeight() == 1);
-  }
+	}
 
-  @Test
-  public void testNotWeight() {
+	@Test
+	public void testNotWeight() {
 		Edge edge = new Edge(1, 2, graph);
 		assertFalse(edge.isWeighted());
 		assertTrue(edge.getWeight() == null);
-  }
+	}
+
+	@Test
+	public void testHashCode() {
+		Edge edge = new Edge(1, 2, graph);
+		assertEquals(edge.hashCode(), edge.hashCode());
+	}
+
+	@Test
+	public void testExceptionConstructors() {
+
+		assertThrows(NoSuchElementException.class, () -> new Edge(new Node(10, graph), graph.getNode(2), graph));
+		assertThrows(NoSuchElementException.class, () -> new Edge(graph.getNode(1), new Node(10, graph), graph));
+		assertThrows(NullPointerException.class, () -> new Edge(graph.getNode(1), graph.getNode(1), null));
+
+		assertThrows(NoSuchElementException.class, () -> new Edge(10, 1, graph));
+		assertThrows(NoSuchElementException.class, () -> new Edge(1, 10, graph));
+	}
 }

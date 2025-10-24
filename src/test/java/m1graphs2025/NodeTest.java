@@ -8,10 +8,9 @@ import org.junit.Before;
 import java.util.List;
 import java.util.Arrays;
 
-public class NodeTest 
-{
+public class NodeTest {
 	private Graph graph;
-	
+
 	private void expectException(Runnable r) {
 		try {
 			r.run();
@@ -25,17 +24,20 @@ public class NodeTest
 	public void setUp() {
 		graph = new Graph();
 	}
-	
+
 	@Test
-	public void testAllConstructors()
-	{
-		Node node = new Node(1, "1", graph);
-		Node node1 = new Node(1, graph);
+	public void testAllConstructors() {
+		new Node(1, "1", graph);
+		new Node(1, graph);
 	}
 
 	@Test
-	public void testNullConstructors()
-	{
+	public void testToString() {
+		assertEquals("1", new Node(1, graph).toString());
+	}
+
+	@Test
+	public void testNullConstructors() {
 		expectException(() -> new Node(-1, graph));
 		expectException(() -> new Node(1, null));
 		graph.addNode(1);
@@ -43,8 +45,7 @@ public class NodeTest
 	}
 
 	@Test
-	public void testGetters()
-	{
+	public void testGetters() {
 		Node node = new Node(1, "2", graph);
 		assertTrue(node.getId() == 1);
 		assertTrue(node.getGraph().equals(graph));
@@ -52,22 +53,20 @@ public class NodeTest
 	}
 
 	@Test
-	public void testEquals()
-	{
+	public void testEquals() {
 		Node node = new Node(1, "1", graph);
 		assertTrue(node.equals(node));
-		assertTrue(new Node(1, "1", graph).equals(new Node(1, "1", graph))); //same
-		assertFalse(new Node(2, "1", graph).equals(new Node(1, "1", graph))); //id
-		assertFalse(new Node(1, "1", graph).equals(new Node(1, "2", graph))); //name
-		assertFalse(new Node(1, "1", graph).equals(1)); //Other object
+		assertTrue(new Node(1, "1", graph).equals(new Node(1, "1", graph))); // same
+		assertFalse(new Node(2, "1", graph).equals(new Node(1, "1", graph))); // id
+		assertFalse(new Node(1, "1", graph).equals(new Node(1, "2", graph))); // name
+		assertFalse(new Node(1, "1", graph).equals(1)); // Other object
 	}
 
 	@Test
-	public void testCompareTo()
-	{
-		assertTrue(new Node(1, graph).compareTo(new Node(1, graph)) == 0); //Equal
-		assertTrue(new Node(1, graph).compareTo(new Node(2, graph)) < 0); //Lower
-		assertTrue(new Node(2, graph).compareTo(new Node(1, graph)) > 0); //Higher
+	public void testCompareTo() {
+		assertTrue(new Node(1, graph).compareTo(new Node(1, graph)) == 0); // Equal
+		assertTrue(new Node(1, graph).compareTo(new Node(2, graph)) < 0); // Lower
+		assertTrue(new Node(2, graph).compareTo(new Node(1, graph)) > 0); // Higher
 	}
 
 	@Test
@@ -98,10 +97,11 @@ public class NodeTest
 		assertEquals(3, successorsMulti.size());
 		assertEquals(Arrays.asList(n2, n3, n2), successorsMulti);
 	}
+
 	@Test
 	public void testGetSuccessors_NoOutgoingEdges() {
 		Graph graph = new Graph();
-		Node n1 = new Node(1,graph);
+		Node n1 = new Node(1, graph);
 		graph.addNode(n1);
 
 		List<Node> successors = n1.getSuccessors();
@@ -129,6 +129,7 @@ public class NodeTest
 		assertEquals(2, successorsMulti.size());
 		assertEquals(Arrays.asList(n1, n1), successorsMulti);
 	}
+
 	@Test
 	public void testGetSuccessors_DisconnectedNodes() {
 		Graph graph = new Graph();
@@ -164,7 +165,7 @@ public class NodeTest
 		assertFalse(n1.adjacent(n3));
 		assertFalse(n1.adjacent(3));
 	}
-	
+
 	@Test
 	public void testDegrees_NoEdges() {
 		Graph graph = new Graph();
@@ -175,7 +176,7 @@ public class NodeTest
 		assertEquals(0, n1.outDegree());
 		assertEquals(0, n1.degree());
 	}
-	
+
 	@Test
 	public void testDegrees_SingleOutgoingEdge() {
 		Graph graph = new Graph();
@@ -255,6 +256,7 @@ public class NodeTest
 		assertEquals(1, n2.outDegree());
 		assertEquals(2, n2.degree());
 	}
+
 	@Test
 	public void testGetOutAndInEdges_SingleEdge() {
 		Graph graph = new Graph();
@@ -427,7 +429,6 @@ public class NodeTest
 		graph.addNode(n1);
 		graph.addNode(n2);
 
-
 		Edge e1 = new Edge(n1, n2, graph); // out
 		Edge e2 = new Edge(n2, n1, graph); // in
 		Edge e3 = new Edge(n1, n1, graph); // self-loop (both in & out)
@@ -443,8 +444,7 @@ public class NodeTest
 		assertTrue(incident.containsAll(List.of(e1, e2, e3)));
 	}
 
-
-@Test
+	@Test
 	public void testGetEdgesTo_NoEdges() {
 		Graph graph = new Graph();
 		Node n1 = new Node(1, graph);
@@ -517,5 +517,11 @@ public class NodeTest
 		List<Edge> edges = n1.getEdgesTo(1);
 		assertEquals(1, edges.size());
 		assertEquals(e1, edges.get(0));
+	}
+
+	@Test
+	public void testGetEdgesTo_Exception() {
+		Node n = new Node(1, graph);
+		assertThrows(IllegalArgumentException.class, () -> n.getEdgesTo(-1));
 	}
 }
