@@ -1,20 +1,22 @@
 package m1graphs2025;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.Collections;
 
 public class Graph {
 	private final Map<Node, List<Edge>> adjEdList;
@@ -607,21 +609,96 @@ public class Graph {
 
 	// Graph Import and Export //
 
-	public static Graph fromDotFile(String filename) {
-		return null;
-	}
+    public static Graph fromDotFile(String filename){
+        return  fromDotFile(filename, ".gv");
+    }
 
 	public static Graph fromDotFile(String filename, String extension) {
-		return null;
+		Graph graph = new Graph();
+
+		if (!extension.startsWith(".")) {
+			extension = "." + extension;
+		}
+
+		String filepath = filename + extension;
+
+        Pattern edgePattern = Pattern.compile(
+            "(\\d+)\\s*(--|->)\\s*(\\d+)(?:\\s*\\[label=(\\d+(?:\\.\\d+)?), len=(\\d+(?:\\.\\d+)?)\\])?"
+        );
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+
+                if (line.isEmpty() || line.startsWith("#") || line.startsWith("{") || line.startsWith("}"))
+                    continue;
+
+                Matcher matcher = edgePattern.matcher(line);
+                if (matcher.find()) {
+                    int from = Integer.parseInt(matcher.group(1));
+                    String op = matcher.group(2);
+                    int to = Integer.parseInt(matcher.group(3));
+
+                    
+                    if (matcher.group(4) != null) {
+                        Integer weight = Integer.valueOf(matcher.group(4));
+                        graph.addEdge(from, to, weight);
+                        if (op.equals("--")) {
+                            graph.addEdge(to, from, weight);
+                        }
+                    }else{
+                        graph.addEdge(from, to);
+                        if (op.equals("--")) {
+                            graph.addEdge(to, from);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + filepath);
+            return null;
+        }
+
+        return graph;
 	}
 
 	public String toDotString() {
-		return "";
+		String txt = "digraph graph {\n";
+		String weight = "";
+		for (Node node : getAllNodes()) {
+			txt += node.toString() + " ";
+		}
+		txt += "\n";
+		for (Edge edge : getAllEdges()) {
+			if (edge.isWeighted()){
+				weight = " [label=" + edge.getWeight() + ", len=" + edge.getWeight() + "]";
+			}
+			txt += edge.from().toString() + " -> " + edge.to().toString() + weight;
+			weight = "";
+		}
+		return txt + "\n}";
 	}
 
 	public void toDotFile(String fileName) {
+		toDotFile(fileName, ".gv");
 	}
 
 	public void toDotFile(String fileName, String extension) {
+		if (extension == null || extension.isEmpty()) {
+            extension = ".gv";
+        } else if (!extension.startsWith(".")) {
+            extension = "." + extension;
+        }
+
+        String filePath = fileName + extension;
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(this.toDotString());
+        } catch (IOException e) {
+            System.err.println("Error writing DOT file: " + filePath);
+            e.printStackTrace();
+        }
 	}
 }
