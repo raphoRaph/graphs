@@ -2,17 +2,19 @@ package m1graphs2025;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-import jdk.nashorn.internal.ir.Node;
-
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class Graph {
-	private Map<Node, List<Edge>> adjEdList;
+	private final Map<Node, List<Edge>> adjEdList;
 
 	// create a graph through dedicated constructors (unweighted graph)
 	public Graph(int ... nodes) {
@@ -34,6 +36,7 @@ public class Graph {
 	}
 	// Node part //
 
+	@Override
 	public String toString(){
 		String res = "";
 		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
@@ -361,20 +364,20 @@ public class Graph {
 	}
 
 	public int[] toSuccessorArray(){
-		List<int> myList = new ArrayList<int>();		
+		List<Integer> myList = new ArrayList<>();		
 		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()){
 			myList.add(pair.getKey().getId());
 		}
 		Collections.sort(myList);
 		
-		List<int> res = new ArrayList<>();
+		List<Integer> res = new ArrayList<>();
 		int count = 0;
 		for (int i = 1; i < myList.get(myList.size()-1); i++){
 			if (i == myList.get(count)){
 				for (Edge edge : adjEdList.get(getNode(i))){
-					res.add(edge.to().getId())
+					res.add(edge.to().getId());
 				}
-				count++
+				count++;
 			}
 			res.add(0);
 		}
@@ -463,7 +466,7 @@ public class Graph {
 	}
 
 	public List<Node> getDFS(int id){
-		Set<Node> lst = new Set<Node>();
+		Set<Node> lst = new HashSet<>();
 		getDFS(id, lst);
 		return new ArrayList<>(lst);
 	}
@@ -473,55 +476,115 @@ public class Graph {
 			lst.add(node);
 			getDFS(node.getId(), lst);
 		}
-		return ;
 	}
 
 	public List<Node> getBFS(){
-		return getBFS(smallestNodeId())
+		return getBFS(smallestNodeId());
 	}
 
 	public List<Node> getBFS(Node u){
-		return getBFS(u.getId())
+		return getBFS(u.getId());
 	}
 
 	public List<Node> getBFS(int id){
 		List<Node> lst = new ArrayList();
-		Queue<Node> queue = new Queue<Node>();
-		queue.add(getNode(id))
+		Queue<Node> queue = new LinkedList<>();
+		queue.add(getNode(id));
 		while (queue.peek() != null) {
 			Node currNode = queue.remove();
 			for (Node node : getSuccessors(currNode)) {
 				if (!lst.contains(node)) {
-					lst.add(node)
-					queue.add(node)
+					lst.add(node);
+					queue.add(node);
 				}
 			}
 		}
 		return lst;
 	}
-
-  /*
+  
 	public List<Node> getDFSWithVisitInfo(Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit){
+		for (Node node : getAllNodes()) {
+			NodeVisitInfo info = new NodeVisitInfo();
+			nodeVisit.put(node, info);
+		}
+		List<Node> finalList = new ArrayList<>();
+		int time = 0;
+		time = getDFSWithVisitInfo(time, getNode(smallestNodeId()), nodeVisit, edgeVisit, finalList);
+
+		for (Node node : getAllNodes()) {
+			if (nodeVisit.get(node).getColor() == colour.WHITE){
+				time = getDFSWithVisitInfo(time, node, nodeVisit, edgeVisit, finalList);
+			}
+		}
+
+		return finalList;
 	}
 
 	public List<Node> getDFSWithVisitInfo(Node u, Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit){
+		for (Node node : getAllNodes()) {
+			NodeVisitInfo info = new NodeVisitInfo();
+			nodeVisit.put(node, info);
+		}
+		List<Node> finalList = new ArrayList<>();
+		int time = 0;
+		time = getDFSWithVisitInfo(time, u, nodeVisit, edgeVisit, finalList);
+
+		for (Node node : getAllNodes()) {
+			if (nodeVisit.get(node).getColor() == colour.WHITE){
+				time = getDFSWithVisitInfo(time, node, nodeVisit, edgeVisit, finalList);
+			}
+		}
+
+		return finalList;
+	}
+
+	private int getDFSWithVisitInfo(int time, Node u, Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit, List<Node> finalList){
+		time ++;
+		NodeVisitInfo info = nodeVisit.get(u);
+		info.setTimesTampDisc(time);
+		info.setColor(colour.GRAY);
+		for (Node node : u.getSuccessors()) {
+			NodeVisitInfo currInfo = nodeVisit.get(node);
+			if (currInfo.getColor() == colour.WHITE){
+				currInfo.setPredecessor(u);
+				time = getDFSWithVisitInfo(time, node, nodeVisit, edgeVisit, finalList);
+				edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.TREE);
+			}
+			if(currInfo.getColor() == colour.GRAY){edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.BACKWARD);}
+			if(currInfo.getColor() == colour.BLACK){
+				if (info.timestampDisc() < currInfo.timestampDisc()) {
+					edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.FORWARD);
+				}else{
+					edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.CROSS);
+				}
+			}
+		}
+		info.setColor(colour.BLACK);
+		finalList.add(u);
+		time ++;
+		info.setTimestampFin(time);
+		return time;
 	}
 
 	// Graph Import and Export //
 
 	public static Graph fromDotFile(String filename){
+		return null;
 	}
 
 	public static Graph fromDotFile(String filename, String extension){
+		return null;
 	}
 
 	public String toDotString(){
+		return "";
 	}
 
 	public void toDotFile(String fileName){
+		return;
 	}
 
 	public void toDotFile(String fileName, String extension){
 	}
-    */
+    
 }

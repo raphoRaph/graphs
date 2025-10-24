@@ -60,8 +60,9 @@ public class Node implements Comparable<Node>{
 		this(id, "", graphHolder);
 	}
 
+	@Override
 	public String toString(){
-		return this.id.toString();
+		return "" + this.id;
 	}
 
 	/**
