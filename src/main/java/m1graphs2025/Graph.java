@@ -19,33 +19,33 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This class represents a directed graph 
+ * This class represents a directed graph
  * 
- * The graph is made of an HashMap of Node from wich the edge will start, 
+ * The graph is made of an HashMap of Node from wich the edge will start,
  * and a list of Edge to know every Node in wich it can go.
  * 
  * @see Node
  * @see Edge
  */
 public class Graph {
-	private final Map<Node, List<Edge>> adjEdList;
+	protected final Map<Node, List<Edge>> adjEdList;
 
 	/**
 	 * Constructs an unweighted Graph.
 	 *
 	 * This constructor creates a directed graph from a successor array.
 	 *
-	 * @param nodes multiple integers representing the different nodes 
+	 * @param nodes multiple integers representing the different nodes
 	 *              (given in the form of a Successor Array)
 	 */
 	public Graph(int... nodes) {
 		adjEdList = new HashMap<>();
 		int idFrom = 1;
 		for (int idTo : nodes) {
-			addNodeIfAbsent(idFrom);
 			if (idTo == 0) {
 				idFrom++;
 			} else {
+				addNodeIfAbsent(idFrom);
 				addNodeIfAbsent(idTo);
 				addEdge(idFrom, idTo);
 			}
@@ -60,10 +60,8 @@ public class Graph {
 	public Graph() {
 		adjEdList = new HashMap<>();
 	}
-	
 
 	// Node-related methods //
-
 
 	/**
 	 * Creates a String representation of the Graph.
@@ -270,7 +268,7 @@ public class Graph {
 	 * @return a List of successor nodes without duplicates
 	 */
 	public List<Node> getSuccessors(Node n) {
-		return getOutEdges(n).stream().map(Edge::to).distinct().toList();
+		return new ArrayList<>(getOutEdges(n).stream().map(Edge::to).distinct().toList());
 	}
 
 	/**
@@ -280,7 +278,7 @@ public class Graph {
 	 * @return a List of successor nodes including duplicates
 	 */
 	public List<Node> getSuccessorsMulti(Node n) {
-		return getOutEdges(n).stream().map(Edge::to).collect(Collectors.toList());
+		return new ArrayList<>(getOutEdges(n).stream().map(Edge::to).collect(Collectors.toList()));
 	}
 
 	/**
@@ -377,7 +375,7 @@ public class Graph {
 	 * Retrieves an edge between two nodes.
 	 *
 	 * @param fromId the ID of the source node
-	 * @param toId the ID of the destination node
+	 * @param toId   the ID of the destination node
 	 * @return the corresponding Edge object if it exists, null otherwise
 	 */
 	private Edge getEdge(int fromId, int toId) {
@@ -437,6 +435,9 @@ public class Graph {
 	 * @return true if there is an edge between uId and vId
 	 */
 	public boolean existsEdge(int uId, int vId) {
+		if (!usesNode(uId) || !usesNode(vId)) {
+			return false;
+		}
 		List<Edge> list = adjEdList.get(getNode(uId));
 		for (Edge edge : list) {
 			if (edge.to() == getNode(vId)) {
@@ -466,7 +467,7 @@ public class Graph {
 	public boolean isMultiEdge(Node u, Node v) {
 		return isMultiEdge(u.getId(), v.getId());
 	}
-	
+
 	/**
 	 * Checks whether multiple edges exist between two node IDs.
 	 *
@@ -488,10 +489,11 @@ public class Graph {
 	/**
 	 * Adds a weighted edge between two nodes.
 	 * 
-	 * To make this method easier to use, nodes that are not already in the graph will be added automatically.
+	 * To make this method easier to use, nodes that are not already in the graph
+	 * will be added automatically.
 	 *
 	 * @param fromId ID of the source node
-	 * @param toId ID of the destination node
+	 * @param toId   ID of the destination node
 	 * @param weight the weight of the edge
 	 */
 	private void addEdge(int fromId, int toId, Integer weight) {
@@ -516,7 +518,7 @@ public class Graph {
 	 * Adds an edge between two nodes.
 	 *
 	 * @param from the source Node
-	 * @param to the destination Node
+	 * @param to   the destination Node
 	 */
 	public void addEdge(Node from, Node to) {
 		addEdge(from.getId(), to.getId());
@@ -525,8 +527,8 @@ public class Graph {
 	/**
 	 * Adds a weighted edge between two nodes.
 	 *
-	 * @param from the source Node
-	 * @param to the destination Node
+	 * @param from   the source Node
+	 * @param to     the destination Node
 	 * @param weight the weight of the edge
 	 */
 	public void addEdge(Node from, Node to, Integer weight) {
@@ -537,7 +539,7 @@ public class Graph {
 	 * Adds an unweighted edge between two node IDs.
 	 *
 	 * @param fromId ID of the source node
-	 * @param toId ID of the destination node
+	 * @param toId   ID of the destination node
 	 */
 	public void addEdge(int fromId, int toId) {
 		addEdge(fromId, toId, null);
@@ -549,7 +551,7 @@ public class Graph {
 	 * In the case of a multiple edge, all the edges will be removed.
 	 *
 	 * @param fromId source node ID
-	 * @param toId destination node ID
+	 * @param toId   destination node ID
 	 * @param weight edge weight to match
 	 * @return true if the edge was removed, false otherwise
 	 */
@@ -578,7 +580,7 @@ public class Graph {
 	 * Removes all edges between two nodes.
 	 *
 	 * @param from source Node
-	 * @param to destination Node
+	 * @param to   destination Node
 	 * @return true if any edge was removed
 	 */
 	public boolean removeEdge(Node from, Node to) {
@@ -588,8 +590,8 @@ public class Graph {
 	/**
 	 * Removes a weighted edge between two nodes.
 	 *
-	 * @param from source Node
-	 * @param to destination Node
+	 * @param from   source Node
+	 * @param to     destination Node
 	 * @param weight weight of the edge to remove
 	 * @return true if the edge was removed
 	 */
@@ -601,10 +603,17 @@ public class Graph {
 	 * Removes an edge between two node IDs.
 	 *
 	 * @param fromId source node ID
-	 * @param toId destination node ID
+	 * @param toId   destination node ID
 	 * @return true if the edge was removed
 	 */
 	public boolean removeEdge(int fromId, int toId) {
+		if (fromId < 0 || toId < 0) {
+			return false;
+		}
+		if (!usesNode(fromId) || !usesNode(toId)) {
+			return false;
+		}
+
 		Node from = getNode(fromId);
 		return adjEdList.get(from).remove(getEdge(fromId, toId));
 	}
@@ -626,6 +635,10 @@ public class Graph {
 	 * @return list of incoming edges
 	 */
 	public List<Edge> getInEdges(int nodeId) {
+		return getIn(nodeId);
+	}
+
+	protected List<Edge> getIn(int nodeId) {
 		List<Edge> lst = new ArrayList<>();
 		for (Map.Entry<Node, List<Edge>> pair : adjEdList.entrySet()) {
 			for (Edge edge : pair.getValue()) {
@@ -654,6 +667,10 @@ public class Graph {
 	 * @return list of outgoing edges
 	 */
 	public List<Edge> getOutEdges(int nodeId) {
+		return getOut(nodeId);
+	}
+
+	protected List<Edge> getOut(int nodeId) {
 		return adjEdList.get(getNode(nodeId));
 	}
 
@@ -707,15 +724,11 @@ public class Graph {
 	 */
 	public List<Edge> getIncidentEdges(int nodeId) {
 		List<Edge> lst = getOutEdges(nodeId);
-		for (Edge edge : getInEdges(nodeId)) {
-			lst.add(edge);
-		}
+		lst.addAll(getInEdges(nodeId));
 		return lst;
 	}
 
-
 	// Graph Representations and Transformations //
-
 
 	/**
 	 * Converts a list of Integers to an array of int.
@@ -799,13 +812,13 @@ public class Graph {
 		for (Node k : nodes) {
 			for (Node i : nodes) {
 				for (Node j : nodes) {
-					if (!closure.existsEdge(i, j) && closure.existsEdge(i, k) && closure.existsEdge(k, j)) {
+					if (!closure.existsEdge(i, j) && closure.existsEdge(i, k) && closure.existsEdge(k, j) && i != j && i != k
+							&& k != j) {
 						closure.addEdge(i, j);
 					}
 				}
 			}
 		}
-
 		return closure;
 	}
 
@@ -859,9 +872,7 @@ public class Graph {
 		return graph;
 	}
 
-
 	// Graph Traversal //
-
 
 	/**
 	 * Performs a Depth-First Search from the smallest node ID.
@@ -897,14 +908,20 @@ public class Graph {
 			getDFS(start, lst, visited);
 		}
 
+		for (Node node : getAllNodes()) {
+			if (!visited.contains(node)) {
+				getDFS(node, lst, visited);
+			}
+		}
+
 		return lst;
 	}
 
 	/**
 	 * Recursive helper for DFS traversal.
 	 *
-	 * @param node current Node
-	 * @param lst list of visited nodes
+	 * @param node    current Node
+	 * @param lst     list of visited nodes
 	 * @param visited set of already visited nodes
 	 */
 	private void getDFS(Node node, List<Node> lst, Set<Node> visited) {
@@ -950,10 +967,21 @@ public class Graph {
 		if (start == null)
 			return lst;
 
+		visited.add(start);
+
+		subGetBFS(start, lst, visited);
+		for (Node node : getAllNodes()) {
+			if (!visited.contains(node)) {
+				subGetBFS(node, lst, visited);
+			}
+		}
+		return lst;
+	}
+
+	private void subGetBFS(Node start, List<Node> lst, Set<Node> visited) {
 		Queue<Node> queue = new LinkedList<>();
 		queue.add(start);
 		visited.add(start);
-
 		while (!queue.isEmpty()) {
 			Node current = queue.poll();
 			lst.add(current);
@@ -965,12 +993,11 @@ public class Graph {
 				}
 			}
 		}
-
-		return lst;
 	}
 
 	/**
-	 * Performs a Depth-First Search while tracking visit information for nodes and edges.
+	 * Performs a Depth-First Search while tracking visit information for nodes and
+	 * edges.
 	 *
 	 * @param nodeVisit map of node visit info
 	 * @param edgeVisit map of edge visit types
@@ -997,7 +1024,7 @@ public class Graph {
 	/**
 	 * Performs DFS with visit information starting from a specific node.
 	 *
-	 * @param u starting Node
+	 * @param u         starting Node
 	 * @param nodeVisit map of node visit info
 	 * @param edgeVisit map of edge visit types
 	 * @return list of visited nodes
@@ -1024,8 +1051,8 @@ public class Graph {
 	/**
 	 * Recursive helper for DFS with visit information.
 	 *
-	 * @param time current timestamp counter
-	 * @param u current Node
+	 * @param time      current timestamp counter
+	 * @param u         current Node
 	 * @param nodeVisit map of node visit info
 	 * @param edgeVisit map of edge visit types
 	 * @param finalList final list of nodes in visit order
@@ -1043,11 +1070,9 @@ public class Graph {
 				currInfo.setPredecessor(u);
 				time = getDFSWithVisitInfo(time, node, nodeVisit, edgeVisit, finalList);
 				edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.TREE);
-			}
-			if (currInfo.getColor() == colour.GRAY) {
+			} else if (currInfo.getColor() == colour.GRAY) {
 				edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.BACKWARD);
-			}
-			if (currInfo.getColor() == colour.BLACK) {
+			} else if (currInfo.getColor() == colour.BLACK) {
 				if (info.timestampDisc() < currInfo.timestampDisc()) {
 					edgeVisit.put(getEdge(u.getId(), node.getId()), EdgeVisitType.FORWARD);
 				} else {
@@ -1062,9 +1087,7 @@ public class Graph {
 		return time;
 	}
 
-
 	// Graph Import and Export //
-
 
 	/**
 	 * Creates a Graph from a DOT file (.gv extension by default).
@@ -1072,14 +1095,14 @@ public class Graph {
 	 * @param filename name of the file without extension
 	 * @return the imported Graph, or null if reading fails
 	 */
-    public static Graph fromDotFile(String filename){
-        return  fromDotFile(filename, ".gv");
-    }
+	public static Graph fromDotFile(String filename) {
+		return fromDotFile(filename, ".gv");
+	}
 
 	/**
 	 * Creates a Graph from a DOT file with a custom extension.
 	 *
-	 * @param filename file name without extension
+	 * @param filename  file name without extension
 	 * @param extension extension of the DOT file
 	 * @return the imported Graph, or null if reading fails
 	 */
@@ -1092,46 +1115,37 @@ public class Graph {
 
 		String filepath = filename + extension;
 
-        Pattern edgePattern = Pattern.compile(
-            "(\\d+)\\s*(--|->)\\s*(\\d+)(?:\\s*\\[label=(\\d+(?:\\.\\d+)?), len=(\\d+(?:\\.\\d+)?)\\])?"
-        );
+		Pattern edgePattern = Pattern.compile(
+				"(\\d+)\\s*(--|->)\\s*(\\d+)(?:\\s*\\[label=(\\d+(?:\\.\\d+)?), len=(\\d+(?:\\.\\d+)?)\\])?");
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
-            String line;
+		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+			String line;
 
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
+			while ((line = br.readLine()) != null) {
+				line = line.trim();
 
-                if (line.isEmpty() || line.startsWith("#") || line.startsWith("{") || line.startsWith("}"))
-                    continue;
+				if (line.isEmpty() || line.startsWith("#") || line.startsWith("{") || line.startsWith("}"))
+					continue;
 
-                Matcher matcher = edgePattern.matcher(line);
-                if (matcher.find()) {
-                    int from = Integer.parseInt(matcher.group(1));
-                    String op = matcher.group(2);
-                    int to = Integer.parseInt(matcher.group(3));
+				Matcher matcher = edgePattern.matcher(line);
+				if (matcher.find()) {
+					int from = Integer.parseInt(matcher.group(1));
+					int to = Integer.parseInt(matcher.group(3));
 
-                    
-                    if (matcher.group(4) != null) {
-                        Integer weight = Integer.valueOf(matcher.group(4));
-                        graph.addEdge(from, to, weight);
-                        if (op.equals("--")) {
-                            graph.addEdge(to, from, weight);
-                        }
-                    }else{
-                        graph.addEdge(from, to);
-                        if (op.equals("--")) {
-                            graph.addEdge(to, from);
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + filepath);
-            return null;
-        }
+					if (matcher.group(4) != null) {
+						Integer weight = Integer.valueOf(matcher.group(4));
+						graph.addEdge(from, to, weight);
+					} else {
+						graph.addEdge(from, to);
+					}
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("Error reading file: " + filepath);
+			return null;
+		}
 
-        return graph;
+		return graph;
 	}
 
 	/**
@@ -1140,20 +1154,7 @@ public class Graph {
 	 * @return a String in DOT format representing the graph
 	 */
 	public String toDotString() {
-		String txt = "digraph graph {\n";
-		String weight = "";
-		for (Node node : getAllNodes()) {
-			txt += node.toString() + " ";
-		}
-		txt += "\n";
-		for (Edge edge : getAllEdges()) {
-			if (edge.isWeighted()){
-				weight = " [label=" + edge.getWeight() + ", len=" + edge.getWeight() + "]";
-			}
-			txt += edge.from().toString() + " -> " + edge.to().toString() + weight;
-			weight = "";
-		}
-		return txt + "\n}";
+		return toDotString(true);
 	}
 
 	/**
@@ -1168,23 +1169,48 @@ public class Graph {
 	/**
 	 * Exports the graph to a DOT file with a custom extension.
 	 *
-	 * @param fileName name of the output file
+	 * @param fileName  name of the output file
 	 * @param extension file extension (e.g., ".gv" or ".dot")
 	 */
 	public void toDotFile(String fileName, String extension) {
 		if (extension == null || extension.isEmpty()) {
-            extension = ".gv";
-        } else if (!extension.startsWith(".")) {
-            extension = "." + extension;
-        }
+			extension = ".gv";
+		} else if (!extension.startsWith(".")) {
+			extension = "." + extension;
+		}
 
-        String filePath = fileName + extension;
+		String filePath = fileName + extension;
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(this.toDotString());
-        } catch (IOException e) {
-            System.err.println("Error writing DOT file: " + filePath);
-            e.printStackTrace();
-        }
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+			writer.write(this.toDotString());
+		} catch (IOException e) {
+			System.err.println("Error writing DOT file: " + filePath);
+			e.printStackTrace();
+		}
+	}
+
+	protected String toDotString(boolean directed) {
+		String connector = directed ? "->" : "--";
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(directed ? "digraph {\n" : "graph {\n").append("\trankdir=LR\n");
+
+		ArrayList<Edge> lst = (ArrayList) getAllEdges();
+		lst.sort(null);
+		for (Edge edge : lst) {
+			sb.append("\t").append(edge.from()).append(" ").append(connector).append(" ").append(edge.to());
+			if (edge.isWeighted()) {
+				sb.append(" [label=").append(edge.getWeight()).append(", len=").append(edge.getWeight()).append("]");
+			}
+			sb.append("\n");
+		}
+
+		for (Node node : getAllNodes()) {
+			if (getInEdges(node).isEmpty() && getOutEdges(node).isEmpty()) {
+				sb.append("\t").append(node).append("\n");
+			}
+		}
+		sb.append("}\n");
+		return sb.toString();
 	}
 }

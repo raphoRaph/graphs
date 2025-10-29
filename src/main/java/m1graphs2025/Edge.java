@@ -77,8 +77,11 @@ public class Edge implements Comparable<Edge> {
 		if (graphHolder == null) {
 			throw new NullPointerException("GraphHolder cannot be null");
 		}
-		if (!graphHolder.usesNode(fromId) || !graphHolder.usesNode(toId)) {
-			throw new NoSuchElementException("FromId or toId must be in graphHoder");
+		if (!graphHolder.usesNode(fromId)) {
+			graphHolder.addNode(fromId);
+		}
+		if (!graphHolder.usesNode(toId)) {
+			graphHolder.addNode(toId);
 		}
 		this.from = graphHolder.getNode(fromId);
 		this.to = graphHolder.getNode(toId);
@@ -160,7 +163,7 @@ public class Edge implements Comparable<Edge> {
 	 * @return the weight of this edge, or null if unweighted
 	 */
 	public Integer getWeight() {
-		return this.weight;
+		return weight;
 	}
 
 	/**
@@ -218,5 +221,10 @@ public class Edge implements Comparable<Edge> {
 		}
 
 		return this.weight.compareTo(o.weight);
+	}
+
+	@Override
+	public String toString() {
+		return from.toString() + "->" + to.toString();
 	}
 }

@@ -265,205 +265,137 @@ public class TestGraphsPW2 {
 			System.out.println("The sum of all edges weights equals " + totalEdgesWeight);
 		}
 
-		/*
-		 * System.out.println("\n\n");
-		 * System.out.println(
-		 * "*-------------------------------------------------------------------------*"
-		 * );
-		 * System.out.
-		 * println("************  PART 4. UNDIRECTED UNWEIGHTED GRAPHS  ***********************"
-		 * );
-		 * System.out.println(
-		 * "*-------------------------------------------------------------------------*"
-		 * );
-		 * 
-		 * System.out.println("\nCreating an undirected simple graph 'usg' from scracth"
-		 * );
-		 * UndirectedGraph usg = new UndirectedGraph(2, 3, 0, 3, 4, 0, 4, 0, 0);
-		 * System.out.println(usg.toDotString());
-		 * System.out.println("usg has " + usg.nbNodes() + " nodes and " + usg.nbEdges()
-		 * + " edges.");
-		 * 
-		 * System.out.println("\n>>>>>> usg: Counting degrees and showing successors");
-		 * for (Node u : usg.getAllNodes()) {
-		 * System.out.println("Node " + u + ". Degree: " + usg.degree(u.getId()) +
-		 * " (In: " + usg.inDegree(u.getId())
-		 * + " / Out: " + usg.outDegree(u.getId()) + ")");
-		 * System.out.println("\tSuccessors: " + usg.getSuccessors(u));
-		 * }
-		 * 
-		 * System.out.println(">>>>>> usg: Edges of the graph");
-		 * System.out.
-		 * println("// N.B. The edges are printed as though they were directed. This is due to the toString()\n"
-		 * +
-		 * "// method that was not overridden. It is possible to do better but not important.\n"
-		 * + "// What is important is that each edge appears only once per direction.");
-		 * System.out.println("All edges of the graph: " + usg.getAllEdges());
-		 * System.out.println("Out-edges per node");
-		 * for (Node u : usg.getAllNodes())
-		 * System.out.println("" + u + ": " + usg.getOutEdges(u));
-		 * System.out.println("In-edges per node");
-		 * for (Node u : usg.getAllNodes())
-		 * System.out.println("" + u + ": " + usg.getInEdges(u));
-		 * System.out.println("Incident edges per node");
-		 * for (Node u : usg.getAllNodes())
-		 * System.out.println("" + u + ": " + usg.getIncidentEdges(u));
-		 * 
-		 * System.out.
-		 * println("Creating an undirected multi-graph with self-loops 'umg' from scratch"
-		 * );
-		 * UndirectedGraph umg = new UndirectedGraph(1, 1, 2, 2, 3, 0, 2, 3, 0, 0);
-		 * 
-		 * String dotUMG = umg.toDotString();
-		 * System.out.println(dotUMG);
-		 * System.out.println("umg has " + umg.nbNodes() + " nodes and " + umg.nbEdges()
-		 * + " edges.");
-		 * 
-		 * System.out.println("\n>>>>>> umg: Counting degrees and showing successors");
-		 * for (Node u : umg.getAllNodes()) {
-		 * System.out.println("Node " + u + ". Degree: " + umg.degree(u.getId()) +
-		 * " (In: " + umg.inDegree(u.getId())
-		 * + " / Out: " + umg.outDegree(u.getId()) + ")");
-		 * System.out.println("\tSuccessors: " + umg.getSuccessors(u));
-		 * }
-		 * 
-		 * System.out.println(">>>>>> umg: Edges of the graph");
-		 * System.out.println("All edges of the graph: " + umg.getAllEdges());
-		 * System.out.println("Out-edges per node");
-		 * for (Node u : umg.getAllNodes())
-		 * System.out.println("" + u + ": " + umg.getOutEdges(u));
-		 * System.out.println("In-edges per node");
-		 * for (Node u : umg.getAllNodes())
-		 * System.out.println("" + u + ": " + umg.getInEdges(u));
-		 * System.out.println("Incident edges per node");
-		 * for (Node u : umg.getAllNodes())
-		 * System.out.println("" + u + ": " + umg.getIncidentEdges(u));
-		 * 
-		 * System.out.
-		 * println("\n>>>>>> umg: Successor Array, Adjacency Matrix, and Graph Reverse"
-		 * );
-		 * System.out.println("umg Successor array\n" +
-		 * Arrays.toString(umg.toSuccessorArray()));
-		 * 
-		 * System.out.println("umg Adjacency Matrix");
-		 * for (int[] row : umg.toAdjMatrix())
-		 * System.out.println("\t" + Arrays.toString(row));
-		 * 
-		 * System.out.
-		 * println("Testing via toDotString() the equality with the reverse graph");
-		 * String dotRUMG = umg.getReverse().toDotString();
-		 * System.out.println("DOT of the reverse of umg\n" + dotRUMG);
-		 * System.out.println("Graph gu and its reverse " + (dotUMG.equals(dotRUMG) ?
-		 * "are identical" : "differ"));
-		 * 
-		 * System.out.
-		 * println("-----------------\n      NOW a disconnected GRAPH    \n----------------"
-		 * );
-		 * System.out.
-		 * println("Building 'guDisc', a disconnected undirected graph with multi-edges and self-loops"
-		 * );
-		 * UndirectedGraph guDisc = new UndirectedGraph(1, 1, 2, 2, 6, 0, 2, 3, 6, 0, 0,
-		 * 6, 0, 6, 0, 0, 0, 9, 10, 0, 0, 0);
-		 * System.out.println(guDisc.toDotString());
-		 * 
-		 * // delete
-		 * // Graph guDisc2 = new Graph(1,1,2,2,6,0, 2,3,6,0, 0, 6,0, 6,0, 0, 0, 9,10,0,
-		 * 0,
-		 * // 0);
-		 * // System.out.println(guDisc2.toDotString());
-		 * // System.exit(0);
-		 * // end delete
-		 * 
-		 * System.out.
-		 * println("Comparing single and multi successors per node for guDisc");
-		 * for (Node u : guDisc.getAllNodes()) {
-		 * List<Node> succs = guDisc.getSuccessors(u), succsMulti =
-		 * guDisc.getSuccessorsMulti(u);
-		 * // sort the lists so that nodes always appear in the same order
-		 * Collections.sort(succs);
-		 * Collections.sort(succsMulti);
-		 * System.out.println("" + u + " single successors: " + succs);
-		 * System.out.println("" + u + " multi  successors: " + succsMulti);
-		 * }
-		 * 
-		 * System.out.println(">>>> DFS of guDisc: " + guDisc.getDFS());
-		 * System.out.println(">>>> BFS of guDisc: " + guDisc.getBFS());
-		 * 
-		 * System.out.println(">>>>>>> Computing guDisc's transitive closure");
-		 * UndirectedGraph guDiscTC = guDisc.getTransitiveClosure();
-		 * System.out.println(guDiscTC.toDotString());
-		 * 
-		 * System.out.println("\n\n");
-		 * System.out.println(
-		 * "*-----------------------------------------------------------------------*");
-		 * System.out.
-		 * println("************  PART 5. UNDIRECTED WEIGHTED GRAPHS  ***********************"
-		 * );
-		 * System.out.println(
-		 * "*-----------------------------------------------------------------------*");
-		 * 
-		 * System.out.
-		 * println("\n>>>>>> Reading 'uwmg' an undirected weighted multi-graph with self loops\n"
-		 * + "from file 'undirWeightedMultiGraph.gv'");
-		 * 
-		 * UndirectedGraph uwmg =
-		 * UndirectedGraph.fromDotFile("undirWeightedMultiGraph");
-		 * if (uwmg == null)
-		 * System.out.println("Null graph was created from 'undirWeightedMultiGraph.gv'"
-		 * );
-		 * else {
-		 * System.out.
-		 * println("Read: OK. The undirected weighted multi-graph has been read as:");
-		 * System.out.println("---------------------");
-		 * System.out.println(uwmg.toDotString());
-		 * System.out.println("---------------------");
-		 * 
-		 * totalEdgesWeight = 0;
-		 * for (Edge e : uwmg.getAllEdges())
-		 * totalEdgesWeight += e.getWeight();
-		 * System.out.println("The sum of all edges weights equals " +
-		 * totalEdgesWeight);
-		 * }
-		 * 
-		 * System.out.
-		 * println("\nComparing single and multi successors per node for uwmg");
-		 * for (Node u : uwmg.getAllNodes()) {
-		 * List<Node> succs = uwmg.getSuccessors(u), succsMulti =
-		 * uwmg.getSuccessorsMulti(u);
-		 * // sort the lists so that nodes always appear in the same order
-		 * Collections.sort(succs);
-		 * Collections.sort(succsMulti);
-		 * System.out.println("" + u + " single successors: " + succs);
-		 * System.out.println("" + u + " multi  successors: " + succsMulti);
-		 * }
-		 */
-		/*
-		 * TO BE CONTINUED ...
-		 * System.out.println("\n\n");
-		 * System.out.println(
-		 * "*-----------------------------------------------------------------------*");
-		 * System.out.
-		 * println("************   PART 6. DFS and Node Visit Info   ***********************"
-		 * );
-		 * System.out.println(
-		 * "*-----------------------------------------------------------------------*");
-		 * 
-		 * 
-		 * // lecture example but undirected
-		 * UndirectedGraph gToVisit = new UndirectedGraph(
-		 * 2, 3, 4, 6, 0, //1
-		 * 5, 6, 0, //2
-		 * 4, 0, //3
-		 * 8, 0, //4
-		 * 6, 7, 8, 0, //5
-		 * 7, 0, //6
-		 * 8,0, //7
-		 * 0 //8
-		 * );
-		 * System.out.println("\nAn undirected graph to visit:");
-		 * System.out.println(gToVisit.toDotString());
-		 */
+		System.out.println("\n\n");
+		System.out.println("*-------------------------------------------------------------------------*");
+		System.out.println("************  PART 4. UNDIRECTED UNWEIGHTED GRAPHS  ***********************");
+		System.out.println("*-------------------------------------------------------------------------*");
 
+		System.out.println("\nCreating an undirected simple graph 'usg' from scracth");
+		UndirectedGraph usg = new UndirectedGraph(2, 3, 0, 3, 4, 0, 4, 0, 0);
+		System.out.println(usg.toDotString());
+		System.out.println("usg has " + usg.nbNodes() + " nodes and " + usg.nbEdges() + " edges.");
+
+		System.out.println("\n>>>>>> usg: Counting degrees and showing successors");
+		for (Node u : usg.getAllNodes()) {
+			System.out.println("Node " + u + ". Degree: " + usg.degree(u.getId()) + " (In: " + usg.inDegree(u.getId())
+					+ " / Out: " + usg.outDegree(u.getId()) + ")");
+			System.out.println("\tSuccessors: " + usg.getSuccessors(u));
+		}
+
+		System.out.println(">>>>>> usg: Edges of the graph");
+		System.out.println("// N.B. The edges are printed as though they were directed. This is due to the toString()\n"
+				+ "// method that was not overridden. It is possible to do better but not important.\n"
+				+ "// What is important is that each edge appears only once per direction.");
+		System.out.println("All edges of the graph: " + usg.getAllEdges());
+		System.out.println("Out-edges per node");
+		for (Node u : usg.getAllNodes())
+			System.out.println("" + u + ": " + usg.getOutEdges(u));
+		System.out.println("In-edges per node");
+		for (Node u : usg.getAllNodes())
+			System.out.println("" + u + ": " + usg.getInEdges(u));
+		System.out.println("Incident edges per node");
+		for (Node u : usg.getAllNodes())
+			System.out.println("" + u + ": " + usg.getIncidentEdges(u));
+
+		System.out.println("Creating an undirected multi-graph with self-loops 'umg' from scratch");
+		UndirectedGraph umg = new UndirectedGraph(1, 1, 2, 2, 3, 0, 2, 3, 0, 0);
+
+		String dotUMG = umg.toDotString();
+		System.out.println(dotUMG);
+		System.out.println("umg has " + umg.nbNodes() + " nodes and " + umg.nbEdges() + " edges.");
+
+		System.out.println("\n>>>>>> umg: Counting degrees and showing successors");
+		for (Node u : umg.getAllNodes()) {
+			System.out.println("Node " + u + ". Degree: " + umg.degree(u.getId()) + " (In: " + umg.inDegree(u.getId())
+					+ " / Out: " + umg.outDegree(u.getId()) + ")");
+			System.out.println("\tSuccessors: " + umg.getSuccessors(u));
+		}
+
+		System.out.println(">>>>>> umg: Edges of the graph");
+		System.out.println("All edges of the graph: " + umg.getAllEdges());
+		System.out.println("Out-edges per node");
+		for (Node u : umg.getAllNodes())
+			System.out.println("" + u + ": " + umg.getOutEdges(u));
+		System.out.println("In-edges per node");
+		for (Node u : umg.getAllNodes())
+			System.out.println("" + u + ": " + umg.getInEdges(u));
+		System.out.println("Incident edges per node");
+		for (Node u : umg.getAllNodes())
+			System.out.println("" + u + ": " + umg.getIncidentEdges(u));
+
+		System.out.println("\n>>>>>> umg: Successor Array, Adjacency Matrix, and Graph Reverse");
+		System.out.println("umg Successor array\n" + Arrays.toString(umg.toSuccessorArray()));
+
+		System.out.println("umg Adjacency Matrix");
+		for (int[] row : umg.toAdjMatrix())
+			System.out.println("\t" + Arrays.toString(row));
+
+		System.out.println("Testing via toDotString() the equality with the reverse graph");
+		String dotRUMG = umg.getReverse().toDotString();
+		System.out.println("DOT of the reverse of umg\n" + dotRUMG);
+		System.out.println("Graph gu and its reverse " + (dotUMG.equals(dotRUMG) ? "are identical" : "differ"));
+
+		System.out.println("-----------------\n      NOW a disconnected GRAPH    \n----------------");
+		System.out.println("Building 'guDisc', a disconnected undirected graph with multi-edges and self-loops");
+		UndirectedGraph guDisc = new UndirectedGraph(1, 1, 2, 2, 6, 0, 2, 3, 6, 0, 0, 6, 0, 6, 0, 0, 0, 9, 10, 0, 0, 0);
+		System.out.println(guDisc.toDotString());
+
+		// delete
+		// Graph guDisc2 = new Graph(1,1,2,2,6,0, 2,3,6,0, 0, 6,0, 6,0, 0, 0, 9,10,0, 0,
+		// 0);
+		// System.out.println(guDisc2.toDotString());
+		// System.exit(0);
+		// end delete
+
+		System.out.println("Comparing single and multi successors per node for guDisc");
+		for (Node u : guDisc.getAllNodes()) {
+			List<Node> succs = guDisc.getSuccessors(u), succsMulti = guDisc.getSuccessorsMulti(u);
+			// sort the lists so that nodes always appear in the same order
+			Collections.sort(succs);
+			Collections.sort(succsMulti);
+			System.out.println("" + u + " single successors: " + succs);
+			System.out.println("" + u + " multi  successors: " + succsMulti);
+		}
+
+		System.out.println(">>>> DFS of guDisc: " + guDisc.getDFS());
+		System.out.println(">>>> BFS of guDisc: " + guDisc.getBFS());
+
+		System.out.println(">>>>>>> Computing guDisc's transitive closure");
+		UndirectedGraph guDiscTC = guDisc.getTransitiveClosure();
+		System.out.println(guDiscTC.toDotString());
+
+		System.out.println("\n\n");
+		System.out.println("*-----------------------------------------------------------------------*");
+		System.out.println("************  PART 5. UNDIRECTED WEIGHTED GRAPHS  ***********************");
+		System.out.println("*-----------------------------------------------------------------------*");
+
+		System.out.println("\n>>>>>> Reading 'uwmg' an undirected weighted multi-graph with self loops\n"
+				+ "from file 'undirWeightedMultiGraph.gv'");
+
+		UndirectedGraph uwmg = UndirectedGraph.fromDotFile("undirWeightedMultiGraph");
+		if (uwmg == null)
+			System.out.println("Null graph was created from 'undirWeightedMultiGraph.gv'");
+		else {
+			System.out.println("Read: OK. The undirected weighted multi-graph has been read as:");
+			System.out.println("---------------------");
+			System.out.println(uwmg.toDotString());
+			System.out.println("---------------------");
+
+			totalEdgesWeight = 0;
+			for (Edge e : uwmg.getAllEdges()) {
+				totalEdgesWeight += e.getWeight();
+			}
+			System.out.println("The sum of all edges weights equals " + totalEdgesWeight);
+		}
+
+		System.out.println("\nComparing single and multi successors per node for uwmg");
+		for (Node u : uwmg.getAllNodes()) {
+			List<Node> succs = uwmg.getSuccessors(u), succsMulti = uwmg.getSuccessorsMulti(u);
+			// sort the lists so that nodes always appear in the same order
+			Collections.sort(succs);
+			Collections.sort(succsMulti);
+			System.out.println("" + u + " single successors: " + succs);
+			System.out.println("" + u + " multi  successors: " + succsMulti);
+		}
 	}
-
 }
