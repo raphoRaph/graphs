@@ -4,42 +4,85 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Represents an undirected graph.
+ *
+ * This class extends {@link Graph} but treats every edge as bidirectional.
+ * All methods are redefined to ensure edges are interpreted symmetrically.
+ *
+ * @see Graph
+ */
 public class UndirectedGraph extends Graph {
+
+	/**
+	 * Constructs an undirected graph from a Successor Array.
+	 *
+	 * Each edge is considered bidirectional.
+	 *
+	 * @param nodes multiple integers representing nodes (given as a Successor Array)
+	 */
 	public UndirectedGraph(int... nodes) {
 		super(nodes);
 	}
 
+	/**
+	 * Constructs an empty undirected graph.
+	 */
 	public UndirectedGraph() {
 		super();
 	}
 
+	/**
+	 * Checks if an edge exists in the undirected graph.
+	 *
+	 * Both directions are considered equivalent.
+	 *
+	 * @param e the Edge to check
+	 * @return true if the edge exists in either direction
+	 */
 	@Override
 	public boolean existsEdge(Edge e) {
 		return existsEdge(e);
 	}
 
+	/**
+	 * Checks if an edge exists between two nodes.
+	 *
+	 * Both directions (u → v and v → u) are considered the same.
+	 *
+	 * @param u the first Node
+	 * @param v the second Node
+	 * @return true if there is an edge between u and v in any direction
+	 */
 	@Override
 	public boolean existsEdge(Node u, Node v) {
 		return existsEdge(u, v);
 	}
 
+	/**
+	 * Checks if an edge exists between two node IDs.
+	 *
+	 * This method verifies both (uId → vId) and (vId → uId).
+	 *
+	 * @param uId the first node ID
+	 * @param vId the second node ID
+	 * @return true if an edge exists between them in any direction
+	 */
 	@Override
 	public boolean existsEdge(int uId, int vId) {
 		return super.existsEdge(uId, vId) && super.existsEdge(vId, uId);
 	}
 
-	@Override
-	public List<Node> getSuccessors(Node n) {
-		// TODO Auto-generated method stub
-		return super.getSuccessors(n);
-	}
-
-	@Override
-	public List<Node> getSuccessorsMulti(Node n) {
-		// TODO Auto-generated method stub
-		return super.getSuccessorsMulti(n);
-	}
-
+	/**
+	 * Retrieves all incoming edges of a given node ID.
+	 *
+	 * In an undirected graph, this includes all edges connected to the node,
+	 * regardless of direction.
+	 *
+	 * @param nodeId ID of the node
+	 * @return list of connected edges (both directions)
+	 */
 	@Override
 	public List<Edge> getInEdges(int nodeId) {
 		ArrayList<Edge> list = new ArrayList<>();
@@ -53,11 +96,27 @@ public class UndirectedGraph extends Graph {
 		return list;
 	}
 
+	/**
+	 * Retrieves all outgoing edges of a given node ID.
+	 *
+	 * For undirected graphs, outgoing edges are identical to incoming ones.
+	 *
+	 * @param nodeId ID of the node
+	 * @return list of connected edges
+	 */
 	@Override
 	public List<Edge> getOutEdges(int nodeId) {
 		return getInEdges(nodeId);
 	}
 
+	/**
+	 * Calculates the in-degree of a node.
+	 *
+	 * In undirected graphs, in-degree equals the total number of incident edges.
+	 *
+	 * @param nodeId ID of the node
+	 * @return the number of edges connected to this node
+	 */
 	@Override
 	public int inDegree(int nodeId) {
 		int nb = 0;
@@ -72,32 +131,73 @@ public class UndirectedGraph extends Graph {
 		return nb;
 	}
 
+	/**
+	 * Calculates the out-degree of a node.
+	 *
+	 * For undirected graphs, out-degree equals in-degree.
+	 *
+	 * @param nodeId ID of the node
+	 * @return the number of edges connected to this node
+	 */
 	@Override
 	public int outDegree(int nodeId) {
 		return inDegree(nodeId);
 	}
 
+	/**
+	 * Returns the total degree of a node.
+	 *
+	 * For undirected graphs, the degree is identical to in-degree.
+	 *
+	 * @param nodeId ID of the node
+	 * @return the total number of edges connected to this node
+	 */
 	@Override
 	public int degree(int nodeId) {
 		return inDegree(nodeId);
 	}
 
+	/**
+	 * Retrieves all incident edges of a given node.
+	 *
+	 * @param nodeId ID of the node
+	 * @return list of all edges connected to this node
+	 */
 	@Override
 	public List<Edge> getIncidentEdges(int nodeId) {
 		return getInEdges(nodeId);
 	}
 
+	/**
+	 * Computes the transitive closure of the undirected graph.
+	 *
+	 * @return a new UndirectedGraph where edges represent reachability
+	 */
 	@Override
 	public UndirectedGraph getTransitiveClosure() {
 		Graph graph = super.getTransitiveClosure();
 		return new UndirectedGraph(graph.toSuccessorArray());
 	}
 
+	/**
+	 * Returns the reverse of the undirected graph.
+	 *
+	 * For undirected graphs, the reverse is identical to the original graph.
+	 *
+	 * @return this graph (since it is symmetric)
+	 */
 	@Override
 	public UndirectedGraph getReverse() {
 		return this;
 	}
 
+	/**
+	 * Converts the undirected graph to an adjacency matrix.
+	 *
+	 * Each undirected edge is represented symmetrically in the matrix.
+	 *
+	 * @return a 2D integer array representing adjacency
+	 */
 	@Override
 	public int[][] toAdjMatrix() {
 		int maxNode = largestNodeId();
@@ -113,16 +213,37 @@ public class UndirectedGraph extends Graph {
 		return matrix;
 	}
 
+	/**
+	 * Converts the undirected graph to a DOT format string.
+	 *
+	 * Uses the "--" connector to represent bidirectional edges.
+	 *
+	 * @return a string representing the graph in DOT format
+	 */
 	@Override
 	public String toDotString() {
 		return super.toDotString(false);
 	}
 
+	/**
+	 * Creates an undirected graph from a DOT file (.gv by default).
+	 *
+	 * @param filename name of the file without extension
+	 * @return the imported UndirectedGraph
+	 */
 	public static UndirectedGraph fromDotFile(String filename) {
 		return fromDotFile(filename, ".gv");
 	}
 
-	// NOTE: don't take the node all but only edges
+	/**
+	 * Creates an undirected graph from a DOT file with a custom extension.
+	 *
+	 * Only edges are imported; isolated nodes are not added.
+	 *
+	 * @param filename the file name without extension
+	 * @param extension the file extension (e.g., ".gv" or ".dot")
+	 * @return the imported UndirectedGraph
+	 */
 	public static UndirectedGraph fromDotFile(String filename, String extension) {
 		Graph graph = Graph.fromDotFile(filename, extension);
 		UndirectedGraph undirectedGraph = new UndirectedGraph();
