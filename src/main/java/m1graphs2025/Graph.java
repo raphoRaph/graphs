@@ -1158,6 +1158,37 @@ public class Graph {
 	}
 
 	/**
+	 * Converts the graph to a DOT format string.
+	 *
+	 * @param directed a boolean to precise if the graph is directed
+	 * @return a String in DOT format representing the graph
+	 */
+	protected String toDotString(boolean directed) {
+		String connector = directed ? "->" : "--";
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(directed ? "digraph {\n" : "graph {\n").append("\trankdir=LR\n");
+
+		ArrayList<Edge> lst = (ArrayList) getAllEdges();
+		lst.sort(null);
+		for (Edge edge : lst) {
+			sb.append("\t").append(edge.from()).append(" ").append(connector).append(" ").append(edge.to());
+			if (edge.isWeighted()) {
+				sb.append(" [label=").append(edge.getWeight()).append(", len=").append(edge.getWeight()).append("]");
+			}
+			sb.append("\n");
+		}
+
+		for (Node node : getAllNodes()) {
+			if (getInEdges(node).isEmpty() && getOutEdges(node).isEmpty()) {
+				sb.append("\t").append(node).append("\n");
+			}
+		}
+		sb.append("}\n");
+		return sb.toString();
+	}
+
+	/**
 	 * Exports the graph to a DOT file (.gv by default).
 	 *
 	 * @param fileName name of the output file without extension
@@ -1187,30 +1218,5 @@ public class Graph {
 			System.err.println("Error writing DOT file: " + filePath);
 			e.printStackTrace();
 		}
-	}
-
-	protected String toDotString(boolean directed) {
-		String connector = directed ? "->" : "--";
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(directed ? "digraph {\n" : "graph {\n").append("\trankdir=LR\n");
-
-		ArrayList<Edge> lst = (ArrayList) getAllEdges();
-		lst.sort(null);
-		for (Edge edge : lst) {
-			sb.append("\t").append(edge.from()).append(" ").append(connector).append(" ").append(edge.to());
-			if (edge.isWeighted()) {
-				sb.append(" [label=").append(edge.getWeight()).append(", len=").append(edge.getWeight()).append("]");
-			}
-			sb.append("\n");
-		}
-
-		for (Node node : getAllNodes()) {
-			if (getInEdges(node).isEmpty() && getOutEdges(node).isEmpty()) {
-				sb.append("\t").append(node).append("\n");
-			}
-		}
-		sb.append("}\n");
-		return sb.toString();
 	}
 }

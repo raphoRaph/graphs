@@ -1,9 +1,7 @@
 package m1graphs2025;
 
-import java.util.Objects;
-
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class represents a node (vertex) in a graph
@@ -56,6 +54,11 @@ public class Node implements Comparable<Node> {
 		this(id, "", graphHolder);
 	}
 
+	/**
+	 * Returns a string representation of this node.
+	 *
+	 * @return a string containing the ID of the node
+	 */
 	@Override
 	public String toString() {
 		return "" + this.id;
