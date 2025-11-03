@@ -34,6 +34,7 @@ public class Graph {
 	 * Constructs an unweighted Graph.
 	 *
 	 * This constructor creates a directed graph from a successor array.
+	 * If the node has no edges, he will not be added
 	 *
 	 * @param nodes multiple integers representing the different nodes
 	 *              (given in the form of a Successor Array)
@@ -806,15 +807,24 @@ public class Graph {
 	 * @return a new Graph where edges represent reachability
 	 */
 	public Graph getTransitiveClosure() {
-		Graph closure = copy(); // start with same nodes and edges
-		List<Node> nodes = new ArrayList<>(adjEdList.keySet());
+		Graph closure = new Graph();
 
-		for (Node k : nodes) {
-			for (Node i : nodes) {
-				for (Node j : nodes) {
-					if (!closure.existsEdge(i, j) && closure.existsEdge(i, k) && closure.existsEdge(k, j) && i != j && i != k
-							&& k != j) {
-						closure.addEdge(i, j);
+		for (Node from : adjEdList.keySet()) {
+			for (Edge edge : adjEdList.get(from)) {
+				if (!edge.isSelfLoop() && !closure.existsEdge(edge.from(), edge.to())) {
+					closure.addEdge(from, edge.to());
+				}
+			}
+		}
+
+		List<Node> nodes = new ArrayList<>(adjEdList.keySet());
+		for (Node u : nodes) {
+			for (Node p : nodes) {
+				if (closure.existsEdge(p, u)) {
+					for (Node s : nodes) {
+						if (!closure.existsEdge(p, s) && closure.existsEdge(u, s) && !p.equals(s)) {
+							closure.addEdge(p, s);
+						}
 					}
 				}
 			}

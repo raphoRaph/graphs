@@ -95,8 +95,7 @@ public class UndirectedGraph extends Graph {
 
 	@Override
 	public UndirectedGraph getReverse() {
-		Graph graph = super.getReverse();
-		return new UndirectedGraph(graph.toSuccessorArray());
+		return this;
 	}
 
 	@Override
