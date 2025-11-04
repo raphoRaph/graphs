@@ -408,13 +408,7 @@ public class Graph {
 	 * @return true if the edge exists, false otherwise
 	 */
 	public boolean existsEdge(Edge e) {
-		List<Edge> list = adjEdList.get(e.from());
-		for (Edge edge : list) {
-			if (edge.equals(e)) {
-				return true;
-			}
-		}
-		return false;
+		return existsEdge(e.from(), e.to());
 	}
 
 	/**
@@ -439,8 +433,8 @@ public class Graph {
 		if (!usesNode(uId) || !usesNode(vId)) {
 			return false;
 		}
-		List<Edge> list = adjEdList.get(getNode(uId));
-		for (Edge edge : list) {
+
+		for (Edge edge : getOutEdges(uId)) {
 			if (edge.to() == getNode(vId)) {
 				return true;
 			}
@@ -478,8 +472,7 @@ public class Graph {
 	 */
 	public boolean isMultiEdge(int uId, int vId) {
 		int count = 0;
-		List<Edge> list = adjEdList.get(getNode(uId));
-		for (Edge edge : list) {
+		for (Edge edge : getOutEdges(uId)) {
 			if (edge.to() == getNode(vId)) {
 				count++;
 			}

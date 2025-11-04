@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Represents an undirected graph.
  *
@@ -20,7 +19,8 @@ public class UndirectedGraph extends Graph {
 	 *
 	 * Each edge is considered bidirectional.
 	 *
-	 * @param nodes multiple integers representing nodes (given as a Successor Array)
+	 * @param nodes multiple integers representing nodes (given as a Successor
+	 *              Array)
 	 */
 	public UndirectedGraph(int... nodes) {
 		super(nodes);
@@ -43,35 +43,7 @@ public class UndirectedGraph extends Graph {
 	 */
 	@Override
 	public boolean existsEdge(Edge e) {
-		return existsEdge(e);
-	}
-
-	/**
-	 * Checks if an edge exists between two nodes.
-	 *
-	 * Both directions (u → v and v → u) are considered the same.
-	 *
-	 * @param u the first Node
-	 * @param v the second Node
-	 * @return true if there is an edge between u and v in any direction
-	 */
-	@Override
-	public boolean existsEdge(Node u, Node v) {
-		return existsEdge(u, v);
-	}
-
-	/**
-	 * Checks if an edge exists between two node IDs.
-	 *
-	 * This method verifies both (uId → vId) and (vId → uId).
-	 *
-	 * @param uId the first node ID
-	 * @param vId the second node ID
-	 * @return true if an edge exists between them in any direction
-	 */
-	@Override
-	public boolean existsEdge(int uId, int vId) {
-		return super.existsEdge(uId, vId) && super.existsEdge(vId, uId);
+		return super.existsEdge(e) && super.existsEdge(e.getSymetric());
 	}
 
 	/**
@@ -175,8 +147,32 @@ public class UndirectedGraph extends Graph {
 	 */
 	@Override
 	public UndirectedGraph getTransitiveClosure() {
-		Graph graph = super.getTransitiveClosure();
-		return new UndirectedGraph(graph.toSuccessorArray());
+		UndirectedGraph closure = new UndirectedGraph();
+
+		// Simple graph
+		for (Node from : getAllNodes()) {
+			for (Edge edge : super.getOutEdges(from)) {
+				if (!edge.isSelfLoop() && !closure.isMultiEdge(edge) && !closure.existsEdge(edge)) {
+					closure.addEdge(edge.from(), edge.to());
+				}
+			}
+		}
+		System.out.println("AH" + closure.toDotString());
+		// Transitive closure
+		for (Node from : getAllNodes()) {
+			for (Edge fromMidEdge : getOutEdges(from)) {
+				for (Edge midToEdge : getOutEdges(fromMidEdge.to())) {
+					Node to = midToEdge.to();
+					if (from.getId() == 3 && to.getId() == 4) {
+						System.out.println("BH");
+					}
+					if (!closure.existsEdge(from, to) && from.getId() != to.getId()) {
+						closure.addEdge(from, to);
+					}
+				}
+			}
+		}
+		return closure;
 	}
 
 	/**
@@ -240,7 +236,7 @@ public class UndirectedGraph extends Graph {
 	 *
 	 * Only edges are imported; isolated nodes are not added.
 	 *
-	 * @param filename the file name without extension
+	 * @param filename  the file name without extension
 	 * @param extension the file extension (e.g., ".gv" or ".dot")
 	 * @return the imported UndirectedGraph
 	 */
