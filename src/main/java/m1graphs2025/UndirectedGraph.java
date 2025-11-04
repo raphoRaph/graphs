@@ -157,16 +157,13 @@ public class UndirectedGraph extends Graph {
 				}
 			}
 		}
-		System.out.println("AH" + closure.toDotString());
+
 		// Transitive closure
 		for (Node from : getAllNodes()) {
-			for (Edge fromMidEdge : getOutEdges(from)) {
-				for (Edge midToEdge : getOutEdges(fromMidEdge.to())) {
-					Node to = midToEdge.to();
-					if (from.getId() == 3 && to.getId() == 4) {
-						System.out.println("BH");
-					}
-					if (!closure.existsEdge(from, to) && from.getId() != to.getId()) {
+			for (Node mid : getAllNodes()) {
+				for (Node to : getAllNodes()) {
+					if (!closure.existsEdge(from, to) && closure.existsEdge(from, mid) && closure.existsEdge(mid, to)
+							&& from.getId() != to.getId()) {
 						closure.addEdge(from, to);
 					}
 				}
