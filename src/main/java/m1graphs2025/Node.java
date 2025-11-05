@@ -55,6 +55,15 @@ public class Node implements Comparable<Node> {
 	}
 
 	/**
+	 * Creates a new node with the last id of the graph
+	 *
+	 * @param graphHolder the graph that owns this node
+	 */
+	public Node(Graph graphHolder) {
+		this(graphHolder.largestNodeId() + 1, "", graphHolder);
+	}
+
+	/**
 	 * Returns a string representation of this node.
 	 *
 	 * @return a string containing the ID of the node
