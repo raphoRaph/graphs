@@ -176,7 +176,7 @@ public class Graph {
 	 *
 	 * @param nodeId the ID of the node to add
 	 */
-	private void addNodeIfAbsent(int nodeId) {
+	protected void addNodeIfAbsent(int nodeId) {
 		if (!usesNode(nodeId))
 			addNode(nodeId);
 	}
@@ -490,7 +490,7 @@ public class Graph {
 	 * @param toId   ID of the destination node
 	 * @param weight the weight of the edge
 	 */
-	private void addEdge(int fromId, int toId, Integer weight) {
+	protected void addEdge(int fromId, int toId, Integer weight) {
 		addNodeIfAbsent(fromId);
 		addNodeIfAbsent(toId);
 		Node from = getNode(fromId);
