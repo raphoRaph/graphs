@@ -66,11 +66,11 @@ public class Node implements Comparable<Node> {
 	/**
 	 * Returns a string representation of this node.
 	 *
-	 * @return a string containing the ID of the node
+	 * @return a string containing the name of the node or the Id if no name
 	 */
 	@Override
 	public String toString() {
-		return "" + this.id;
+		return (this.name != null) ? this.name : "" + this.id;
 	}
 
 	/**
