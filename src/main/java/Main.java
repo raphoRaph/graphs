@@ -1,4 +1,5 @@
 import m1graphs2025.*;
+import m1maxflow2025.*;
 
 import java.util.List;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ import java.util.Arrays;
  * Date: November 2025
  */
 public class Main {
-	public static void main(String[] args) {
+	public static void mainGraph(String[] args) {
 		System.out.println("\n==================================================");
 		System.out.println(" Creating DIRECTED graph demonstration");
 		System.out.println("==================================================");
@@ -123,5 +124,10 @@ public class Main {
 		System.out.println("\nTransitive closure of undirected graph:");
 		UndirectedGraph closureUnd = ug.getTransitiveClosure();
 		System.out.println(closureUnd);
+	}
+
+	public static void main(String[] args) {
+		FlowNetwork flow = new FlowNetwork();
+		flow.addEdge(1, 2, 1, 0);
 	}
 }
