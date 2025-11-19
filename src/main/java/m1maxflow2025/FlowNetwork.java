@@ -35,7 +35,7 @@ public class FlowNetwork extends Graph {
 		for (FlowEdge edge : lst) {
 			sb.append("\t").append(edge.from()).append(" ").append("->").append(" ").append(edge.to());
 			if (edge.isWeighted()) {
-				String div = edge.getWeight() + "/" + edge.getFlow();
+				String div = edge.getFlow() + "/" + edge.getWeight();
 				sb.append(" [label=").append(edge.getFlow() != 0 ? div : edge.getWeight()).append(", len=").append(edge.getWeight()).append("]");
 			}
 			sb.append("\n");
