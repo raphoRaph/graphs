@@ -19,4 +19,8 @@ public class FlowEdge extends Edge {
 	public void setFlow(Integer newflow) {
 		this.flow = newflow;
 	}
+
+	public void addFlow(Integer flow) {
+		this.flow += flow;
+	}
 }

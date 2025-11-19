@@ -2,7 +2,10 @@ import m1graphs2025.*;
 import m1maxflow2025.*;
 
 import java.util.List;
+import java.util.Queue;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 /**
  * Demonstration class for the m1graphs2025 API.
@@ -127,7 +130,42 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		FlowNetwork flow = new FlowNetwork();
-		flow.addEdge(1, 2, 1, 0);
+		FlowNetwork fn = new FlowNetwork();
+		fn.addEdge(1, 2, 8);
+		fn.addEdge(1, 3, 6);
+		fn.addEdge(2, 4, 6);
+		fn.addEdge(3, 4, 10);
+		fn.addEdge(3, 5, 12);
+		fn.addEdge(4, 5, 3);
+		fn.addEdge(4, 6, 4);
+		fn.addEdge(5, 6, 6);
+
+		FordFulkerson.PathFinder bfsPathFinder = (residual, source, target) -> {
+			Queue<List<Node>> queue = new LinkedList<>();
+			List<Node> startPath = new ArrayList<>();
+			startPath.add(source);
+			queue.add(startPath);
+
+			while (!queue.isEmpty()) {
+				List<Node> path = queue.poll();
+				Node last = path.get(path.size() - 1);
+				if (last.equals(target)) {
+					return path;
+				}
+
+				for (Node succ : residual.getSuccessors(last)) {
+					if (!path.contains(succ)) {
+						List<Node> newPath = new ArrayList<>(path);
+						newPath.add(succ);
+						queue.add(newPath);
+					}
+				}
+			}
+			return null;
+		};
+
+		FlowNetwork result = FordFulkerson.maxFlow(fn, bfsPathFinder);
+
+		System.out.println("Max flow network:\n" + result.toDotString());
 	}
 }

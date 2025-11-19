@@ -12,3 +12,9 @@ This is intentional behavior:
 - In our implementation, isolated nodes (nodes without any edges) are not in the graph
 - This makes the exported DOT cleaner and does not change the internal graph structure
 - The graph itself remains fully functional and correct; only the DOT representation differs
+
+
+
+
+remove name in equals for nodes
+change == to equals between 2 nodes in Graph.getEdges

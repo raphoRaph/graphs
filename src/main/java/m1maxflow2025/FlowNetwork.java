@@ -1,6 +1,6 @@
 package m1maxflow2025;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import m1graphs2025.Edge;
 import m1graphs2025.Graph;
@@ -13,53 +13,70 @@ public class FlowNetwork extends Graph {
 		addEdge(fromId, toId, weight, 0);
 	}
 
-	public void addEdge(int fromId, int toId, Integer weight, Integer flow) {
-		if (weight == null || flow == null) {
+	public void addEdge(int fromId, int toId, Integer capacity, Integer flow) {
+		if (capacity == null || flow == null) {
 			throw new NullPointerException("Parameters cannot be null");
 		}
 		addNodeIfAbsent(fromId);
 		addNodeIfAbsent(toId);
+
 		Node from = getNode(fromId);
 		Node to = getNode(toId);
 
-		adjEdList.get(from).add(new FlowEdge(from, to, this, weight, flow));
+		adjEdList.get(from).add(new FlowEdge(from, to, this, capacity, flow));
 	}
 
-	private int flowValue(){
-		int res = 0;
-		for (Edge edge: getOutEdges(smallestNodeId())) {
-			FlowEdge flow = (FlowEdge) edge;
-			res += flow.getFlow();	
+	public void addFlow(List<Node> path, int delta) {
+		for (int i = 0; i < path.size() - 1; i++) {
+			Node u = path.get(i);
+			Node v = path.get(i + 1);
+
+			FlowEdge forward = getEdge(u, v);
+			FlowEdge backward = getEdge(v, u);
+
+			if (forward != null) {
+				forward.addFlow(delta);
+			} else if (backward != null) {
+				backward.addFlow(-delta);
+			}
 		}
-		return res;
 	}
 
+	private FlowEdge getEdge(Node u, Node v) {
+		List<Edge> edges = getEdges(u, v);
+		return edges.size() == 1 ? (FlowEdge) edges.get(0) : null;
+	}
+
+	private int flowValue() {
+		int s = smallestNodeId();
+		int total = 0;
+		for (Edge edge : getOutEdges(s)) {
+			total += ((FlowEdge) edge).getFlow();
+		}
+		return total;
+	}
 
 	@Override
 	public String toDotString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("digraph {\n").append("\trankdir=LR\n");
-		sb.append("label =\"Value: ").append(flowValue()).append("\n");
+		sb.append("digraph FlowNetwork {\n")
+				.append("\trankdir=\"LR\";\n")
+				.append("\tlabel=\"Value: ").append(flowValue()).append("\";\n");
 
-		ArrayList<Edge> lst = (ArrayList) getAllEdges();
+		getAllEdges().stream().sorted().forEach(e -> {
+			FlowEdge f = (FlowEdge) e;
 
-		lst.sort(null);
-		for (Edge edge : lst) {
-			FlowEdge flow = (FlowEdge) edge;
-			sb.append("\t").append(flow.from()).append(" ").append("->").append(" ").append(flow.to());
-			if (flow.isWeighted()) {
-				String div = flow.getFlow() + "/" + flow.getWeight();
-				sb.append(" [label=").append(flow.getFlow() != 0 ? div : flow.getWeight()).append(", len=").append(flow.getWeight()).append("]");
-			}
-			sb.append("\n");
-		}
-    
-		for (Node node : getAllNodes()) {
-			if (getInEdges(node).isEmpty() && getOutEdges(node).isEmpty()) {
-				sb.append("\t").append(node).append("\n");
-			}
-		}
+			sb.append("\t")
+					.append(f.from()).append(" -> ").append(f.to())
+					.append(" [label=\"");
+
+			sb.append(f.getFlow() != 0 ? f.getFlow() + "/" + f.getWeight()
+					: f.getWeight());
+
+			sb.append("\", len=").append(f.getWeight()).append("];\n");
+		});
+
 		sb.append("}\n");
 		return sb.toString();
 	}

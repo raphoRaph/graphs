@@ -38,6 +38,16 @@ public class ResidualGraph extends Graph {
 		return residualGraph;
 	}
 
+	public Node sourceNode() {
+		int sourceId = smallestNodeId();
+		return getNode(sourceId);
+	}
+
+	public Node targetNode() {
+		int sourceId = largestNodeId();
+		return getNode(sourceId);
+	}
+
 	public int bottleneckOf(List<Node> path) {
 		int b = Integer.MAX_VALUE;
 
@@ -63,47 +73,61 @@ public class ResidualGraph extends Graph {
 		return 0;
 	}
 
-	private String pathString(){
-		String path = "Augmenting path: [";
-		for (int i = 0; i < lastPath.size(); i++){
-			path += lastPath.get(i).toString();
-			if(i != lastPath.size() -1){
-				path += ", ";
-			}
+	private String pathString() {
+		StringBuilder sb = new StringBuilder("Augmenting path: [");
+		for (int i = 0; i < lastPath.size(); i++) {
+			sb.append(lastPath.get(i));
+			if (i < lastPath.size() - 1)
+				sb.append(", ");
 		}
-		path += "].\n";
-		return path;
+		return sb.append("].").toString();
+	}
+
+	private boolean areConsecutive(Node from, Node to) {
+		if (lastPath == null)
+			return false;
+
+		for (int i = 0; i < lastPath.size() - 1; i++) {
+			if (lastPath.get(i).equals(from) && lastPath.get(i + 1).equals(to))
+				return true;
+		}
+		return false;
 	}
 
 	@Override
 	public String toDotString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("digraph {\n").append("\trankdir=LR\n");
-		String path = pathString();
-		String resiCap = "Residual capacity: " + residualCapacity;
-		sb.append("label = residual graph.\n").append(path).append(resiCap).append("\n");
+		sb.append("digraph residualGraph {\n")
+				.append("\trankdir=\"LR\";\n");
 
-		ArrayList<Edge> lst = (ArrayList) getAllEdges();
+		if (lastPath != null) {
+			sb.append("\tlabel=\"Residual graph.\\n")
+					.append(pathString() + "\\n")
+					.append("Residual capacity: ")
+					.append(residualCapacity)
+					.append("\";\n");
+		}
 
-		lst.sort(null);
-		for (Edge edge : lst) {
-			FlowEdge flow = (FlowEdge) edge;
-			String bigArrow = "";
-			if (lastPath.contains(edge.from()) && lastPath.contains(edge.to())){
-				bigArrow = ", penwidth=3, color=\"blue\"";
+		for (Edge e : getAllEdges()) {
+			boolean inPath = lastPath != null && areConsecutive(e.from(), e.to());
+			boolean isBottleneck = inPath && e.getWeight() == residualCapacity;
+
+			sb.append("\t")
+					.append(e.from()).append(" -> ").append(e.to())
+					.append(" [label=").append(e.getWeight())
+					.append(", len=").append(e.getWeight());
+
+			if (inPath) {
+				sb.append(", penwidth=3, color=\"blue\"");
 			}
-			sb.append("\t").append(flow.from()).append(" ").append("->").append(" ").append(flow.to());
-			String label = (flow.getFlow() != 0) ? (flow.getFlow() + "/" + flow.getWeight()) : "" + flow.getWeight();
-			sb.append(" [label=").append(label).append(", len=").append(flow.getWeight()).append(bigArrow).append("]");
-			sb.append("\n");
-		}
-    
-		for (Node node : getAllNodes()) {
-			if (getInEdges(node).isEmpty() && getOutEdges(node).isEmpty()) {
-				sb.append("\t").append(node).append("\n");
+			if (isBottleneck) {
+				sb.append(", fontcolor=\"red\"");
 			}
+
+			sb.append("];\n");
 		}
+
 		sb.append("}\n");
 		return sb.toString();
 	}

@@ -678,7 +678,7 @@ public class Graph {
 	public List<Edge> getEdges(Node u, Node v) {
 		List<Edge> lst = new ArrayList<>();
 		for (Edge edge : adjEdList.get(u)) {
-			if (edge.from() == u && edge.to() == v) {
+			if (edge.from().equals(u) && edge.to().equals(v)) {
 				lst.add(edge);
 			}
 		}

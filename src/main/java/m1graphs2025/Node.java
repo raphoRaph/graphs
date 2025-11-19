@@ -51,7 +51,7 @@ public class Node implements Comparable<Node> {
 	 * @throws IllegalArgumentException if id is already used
 	 */
 	public Node(int id, Graph graphHolder) {
-		this(id, "", graphHolder);
+		this(id, null, graphHolder);
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class Node implements Comparable<Node> {
 		}
 
 		Node other = (Node) obj;
-		return (this.id == other.id && this.name.equals(other.name));
+		return (this.id == other.id);
 	}
 
 	/**
