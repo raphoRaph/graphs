@@ -21,7 +21,6 @@ public class FordFulkerson {
 			}
 
 			int delta = r.bottleneckOf(path);
-			System.out.println(r.toDotString());
 			fn.addFlow(path, delta);
 		}
 		return fn;
