@@ -22,9 +22,9 @@ import m1graphs2025.Node;
  */
 public class PathFinder {
 	/**
-	 * Returns a FordFulkerson.PathFinder implementation that uses Breadth-First Search (BFS)
-	 * to find an augmenting path in the residual graph.
-	 * This strategy corresponds to the Edmonds-Karp algorithm.
+	 * Returns a FordFulkerson.PathFinder implementation that uses Breadth-First
+	 * Search (BFS) to find an augmenting path in the residual graph. This strategy
+	 * corresponds to the Edmonds-Karp algorithm.
 	 *
 	 * @return A PathFinder instance using BFS.
 	 */
@@ -55,8 +55,8 @@ public class PathFinder {
 	}
 
 	/**
-	 * Returns a FordFulkerson.PathFinder implementation that uses Depth-First Search (DFS)
-	 * to find an augmenting path in the residual graph.
+	 * Returns a FordFulkerson.PathFinder implementation that uses Depth-First
+	 * Search (DFS) to find an augmenting path in the residual graph.
 	 *
 	 * @return A PathFinder instance using DFS.
 	 */
@@ -87,15 +87,13 @@ public class PathFinder {
 	}
 
 	/**
-	 * Returns a FordFulkerson.PathFinder implementation that uses Dijkstra's algorithm
-	 * to find an augmenting path in the residual graph, prioritizing paths with higher residual capacity.
-	 * Note: Dijkstra's is typically used for shortest path on edge weights, here it's adapted
-	 * to find a path in the residual graph.
+	 * Returns a FordFulkerson.PathFinder implementation that uses Dijkstra's
+	 * algorithm to find an augmenting path in the residual graph, prioritizing
+	 * paths with higher residual capacity.
 	 *
 	 * @return A PathFinder instance using Dijkstra's algorithm.
 	 */
 	public static FordFulkerson.PathFinder dijkstraPathFinder() {
-
 		return (residual, source, target) -> {
 			Map<Node, Integer> dist = new HashMap<>();
 			Map<Node, Node> prev = new HashMap<>();
@@ -131,6 +129,61 @@ public class PathFinder {
 				path.add(at);
 			Collections.reverse(path);
 
+			return path;
+		};
+	}
+
+	/**
+	 * Creates a PathFinder implementing a "maximum capacity" variant of Dijkstra,
+	 * also known as the *Widest Path* algorithm.
+	 *
+	 * @return a PathFinder implementing the widest-path strategy
+	 */
+	public static FordFulkerson.PathFinder dijkstraMaxPathFinder() {
+		return (residual, source, target) -> {
+
+			Map<Node, Integer> best = new HashMap<>();
+			Map<Node, Node> prev = new HashMap<>();
+
+			PriorityQueue<Node> pq = new PriorityQueue<>(
+					(a, b) -> Integer.compare(best.get(b), best.get(a)));
+
+			for (Node n : residual.getAllNodes())
+				best.put(n, -1);
+
+			best.put(source, Integer.MAX_VALUE);
+			pq.add(source);
+
+			while (!pq.isEmpty()) {
+				Node u = pq.poll();
+
+				if (u.equals(target))
+					break;
+
+				for (Edge e : residual.getOutEdges(u)) {
+					Node v = e.to();
+					int cap = e.getWeight();
+					if (cap <= 0)
+						continue;
+
+					int newCap = Math.min(best.get(u), cap);
+
+					if (newCap > best.get(v)) {
+						best.put(v, newCap);
+						prev.put(v, u);
+						pq.add(v);
+					}
+				}
+			}
+
+			if (!prev.containsKey(target))
+				return null;
+
+			List<Node> path = new ArrayList<>();
+			for (Node at = target; at != null; at = prev.get(at))
+				path.add(at);
+
+			Collections.reverse(path);
 			return path;
 		};
 	}

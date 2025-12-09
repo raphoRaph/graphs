@@ -5,6 +5,8 @@ import m1graphs2025.Graph;
 import m1graphs2025.Node;
 import m1graphs2025.UndirectedGraph;
 import m1maxflow2025.FlowNetwork;
+import m1maxflow2025.FordFulkerson;
+import m1maxflow2025.PathFinder;
 
 /**
  * Demonstration class for the m1graphs2025 API.
@@ -139,7 +141,22 @@ public class Main {
 		} else {
 			System.out.println("Failed to import the DOT file.");
 		}
-		
+
+		FlowNetwork fnBFS = createFn();
+		FlowNetwork fnDFS = createFn();
+		FlowNetwork fnDIJ = createFn();
+		FlowNetwork fnDIJMax = createFn();
+
+		FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS, PathFinder.bfsPathFinder());
+		FlowNetwork resultDFS = FordFulkerson.maxFlow(fnDFS, PathFinder.dfsPathFinder());
+		FlowNetwork resultDIJ = FordFulkerson.maxFlow(fnDIJ, PathFinder.dijkstraPathFinder());
+		FlowNetwork resultDIJMax = FordFulkerson.maxFlow(fnDIJMax, PathFinder.dijkstraMaxPathFinder());
+
+		System.out.println("Max flow network:\n" + resultBFS.toDotString());
+		System.out.println("Max flow network:\n" + resultDFS.toDotString());
+		System.out.println("Max flow network:\n" + resultDIJ.toDotString());
+		System.out.println("Max flow network:\n" + resultDIJMax.toDotString());
+
 	}
 
 	private static FlowNetwork createFn() {
