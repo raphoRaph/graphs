@@ -1,6 +1,16 @@
 package m1maxflow2025;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import m1graphs2025.Edge;
 import m1graphs2025.Graph;
@@ -80,4 +90,123 @@ public class FlowNetwork extends Graph {
 		sb.append("}\n");
 		return sb.toString();
 	}
+
+	public static FlowNetwork fromDotFile(String filename) {
+		return fromDotFile(filename, ".gv");
+	}
+
+	public static FlowNetwork fromDotFile(String filename, String extension) {
+		FlowNetwork graph = new FlowNetwork();
+
+		if (!extension.startsWith(".")) {
+			extension = "." + extension;
+		}
+
+		String filepath = filename + extension;
+
+		// Regex to parse edge: src -> dst [attributes]
+		Pattern edgePattern = Pattern.compile("^\\s*(\\w+)\\s*(?:->|--)\\s*(\\w+)(?:\\s*\\[(.*)\\])?");
+		// Regex to parse label: label="6/8" (flow/cap) or label="8" (cap)
+		Pattern labelPattern = Pattern.compile("label\\s*=\s*\"?(\\d+)(?:/(\\d+))?\"?");
+
+		List<String> lines = new ArrayList<>();
+		Set<String> nodeNames = new HashSet<>();
+
+		// 1. Read file and collect all node names
+		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				line = line.trim();
+				if (line.isEmpty() || line.startsWith("#") || line.startsWith("{") || line.startsWith("}"))
+					continue;
+				
+				// Handle graph label or other properties if necessary (ignored for now)
+				
+				Matcher matcher = edgePattern.matcher(line);
+				if (matcher.find()) {
+					nodeNames.add(matcher.group(1)); // Source
+					nodeNames.add(matcher.group(2)); // Target
+					lines.add(line); // Store valid edge line for second pass
+				}
+			}
+		} catch (IOException e) {
+			System.err.println("Error reading file: " + filepath + " " + e.getMessage());
+			return null;
+		}
+
+		// 2. Map names to IDs
+		Map<String, Integer> nameToId = new HashMap<>();
+		Set<Integer> usedIds = new HashSet<>();
+
+		// First pass: Assign IDs to integer names
+		for (String name : nodeNames) {
+			if (name.matches("\\d+")) {
+				int id = Integer.parseInt(name);
+				nameToId.put(name, id);
+				usedIds.add(id);
+			}
+		}
+
+		// Second pass: Assign IDs to non-integer names
+		int nextId = 1;
+		for (String name : nodeNames) {
+			if (!nameToId.containsKey(name)) {
+				while (usedIds.contains(nextId)) {
+					nextId++;
+				}
+				nameToId.put(name, nextId);
+				usedIds.add(nextId);
+			}
+		}
+
+		// 3. Create Nodes with names and add to graph
+		// We use the 'protected' access to adjEdList to insert named nodes, 
+		// because standard addNode(int) creates nodes without names.
+		for (Map.Entry<String, Integer> entry : nameToId.entrySet()) {
+			Node n = new Node(entry.getValue(), entry.getKey(), graph);
+			graph.adjEdList.put(n, new ArrayList<>());
+		}
+
+		// 4. Parse edges and add to graph
+		for (String line : lines) {
+			Matcher matcher = edgePattern.matcher(line);
+			if (matcher.find()) {
+				String fromName = matcher.group(1);
+				String toName = matcher.group(2);
+				String attributes = matcher.group(3);
+
+				int fromId = nameToId.get(fromName);
+				int toId = nameToId.get(toName);
+
+				Integer capacity = 0;
+				Integer flow = 0;
+
+				if (attributes != null) {
+					Matcher labelMatcher = labelPattern.matcher(attributes);
+					if (labelMatcher.find()) {
+						String p1 = labelMatcher.group(1); // First number
+						String p2 = labelMatcher.group(2); // Second number (optional)
+
+						if (p2 != null) {
+							// Format: flow/capacity
+							flow = Integer.parseInt(p1);
+							capacity = Integer.parseInt(p2);
+						} else {
+							// Format: capacity (flow is 0)
+							capacity = Integer.parseInt(p1);
+							flow = 0;
+						}
+					}
+				}
+				
+				// Use addEdge with flow and capacity
+				// Note: addEdge will call addNodeIfAbsent, which checks usesNode.
+				// Since we manually added all nodes, it won't overwrite them.
+				graph.addEdge(fromId, toId, capacity, flow);
+			}
+		}
+
+		return graph;
+	}
+
 }

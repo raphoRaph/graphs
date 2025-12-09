@@ -1,8 +1,10 @@
-import m1graphs2025.*;
-import m1maxflow2025.*;
-
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+
+import m1graphs2025.Graph;
+import m1graphs2025.Node;
+import m1graphs2025.UndirectedGraph;
+import m1maxflow2025.FlowNetwork;
 
 /**
  * Demonstration class for the m1graphs2025 API.
@@ -127,17 +129,17 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		FlowNetwork fnBFS = createFn();
-		FlowNetwork fnDFS = createFn();
-		FlowNetwork fnDIJ = createFn();
 
-		FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS, PathFinder.bfsPathFinder());
-		FlowNetwork resultDFS = FordFulkerson.maxFlow(fnDFS, PathFinder.dfsPathFinder());
-		FlowNetwork resultDIJ = FordFulkerson.maxFlow(fnDIJ, PathFinder.dijkstraPathFinder());
-
-		System.out.println("Max flow network:\n" + resultBFS.toDotString());
-		System.out.println("Max flow network:\n" + resultDFS.toDotString());
-		System.out.println("Max flow network:\n" + resultDIJ.toDotString());
+		System.out.println("\nImporting flownetwork from 'flowNetwork.gv'");
+		FlowNetwork imported = FlowNetwork.fromDotFile("flowNetwork");
+		if (imported != null) {
+			System.out.println("flownetwork imported successfully:\n" + imported);
+			System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
+			System.out.println(imported.toDotString());
+		} else {
+			System.out.println("Failed to import the DOT file.");
+		}
+		
 	}
 
 	private static FlowNetwork createFn() {
