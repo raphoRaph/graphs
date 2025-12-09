@@ -16,13 +16,33 @@ import m1graphs2025.Edge;
 import m1graphs2025.Graph;
 import m1graphs2025.Node;
 
+/**
+ * Represents a Flow Network, extending the generic Graph class.
+ * It supports edges with capacity and flow.
+ */
 public class FlowNetwork extends Graph {
 
+	/**
+	 * Adds an edge with a weight, interpreted as capacity with 0 initial flow.
+	 *
+	 * @param fromId ID of the source node
+	 * @param toId   ID of the destination node
+	 * @param weight The capacity of the edge
+	 */
 	@Override
 	public void addEdge(int fromId, int toId, Integer weight) {
 		addEdge(fromId, toId, weight, 0);
 	}
 
+	/**
+	 * Adds an edge with specific capacity and flow.
+	 *
+	 * @param fromId   ID of the source node
+	 * @param toId     ID of the destination node
+	 * @param capacity The capacity of the edge
+	 * @param flow     The current flow of the edge
+	 * @throws NullPointerException if capacity or flow is null
+	 */
 	public void addEdge(int fromId, int toId, Integer capacity, Integer flow) {
 		if (capacity == null || flow == null) {
 			throw new NullPointerException("Parameters cannot be null");
@@ -36,6 +56,13 @@ public class FlowNetwork extends Graph {
 		adjEdList.get(from).add(new FlowEdge(from, to, this, capacity, flow));
 	}
 
+	/**
+	 * Updates the flow along a given path by a delta value.
+	 * It adds flow to forward edges and subtracts flow from backward edges.
+	 *
+	 * @param path  The list of nodes representing the path
+	 * @param delta The amount of flow to add
+	 */
 	public void addFlow(List<Node> path, int delta) {
 		for (int i = 0; i < path.size() - 1; i++) {
 			Node u = path.get(i);
@@ -52,11 +79,23 @@ public class FlowNetwork extends Graph {
 		}
 	}
 
+	/**
+	 * Retrieves the flow edge between two nodes.
+	 *
+	 * @param u The source node
+	 * @param v The destination node
+	 * @return The FlowEdge if it exists and is unique, null otherwise
+	 */
 	private FlowEdge getEdge(Node u, Node v) {
 		List<Edge> edges = getEdges(u, v);
 		return edges.size() == 1 ? (FlowEdge) edges.get(0) : null;
 	}
 
+	/**
+	 * Calculates the total flow coming out of the source (smallest node ID).
+	 *
+	 * @return The total flow value
+	 */
 	private int flowValue() {
 		int s = smallestNodeId();
 		int total = 0;
@@ -66,6 +105,12 @@ public class FlowNetwork extends Graph {
 		return total;
 	}
 
+	/**
+	 * Generates a DOT representation of the flow network.
+	 * Includes the total flow value in the label and edge attributes for flow/capacity.
+	 *
+	 * @return A string containing the DOT representation
+	 */
 	@Override
 	public String toDotString() {
 		StringBuilder sb = new StringBuilder();
@@ -91,10 +136,24 @@ public class FlowNetwork extends Graph {
 		return sb.toString();
 	}
 
+	/**
+	 * Creates a FlowNetwork from a DOT file (.gv extension by default).
+	 *
+	 * @param filename name of the file without extension
+	 * @return the imported FlowNetwork, or null if reading fails
+	 */
 	public static FlowNetwork fromDotFile(String filename) {
 		return fromDotFile(filename, ".gv");
 	}
 
+	/**
+	 * Creates a FlowNetwork from a DOT file with a specific extension.
+	 * It parses labels to extract flow and capacity (e.g., label="flow/capacity" or label="capacity").
+	 *
+	 * @param filename  name of the file without extension
+	 * @param extension the file extension (e.g., ".gv")
+	 * @return the imported FlowNetwork, or null if reading fails
+	 */
 	public static FlowNetwork fromDotFile(String filename, String extension) {
 		FlowNetwork graph = new FlowNetwork();
 
@@ -112,7 +171,6 @@ public class FlowNetwork extends Graph {
 		List<String> lines = new ArrayList<>();
 		Set<String> nodeNames = new HashSet<>();
 
-		// 1. Read file and collect all node names
 		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -120,13 +178,12 @@ public class FlowNetwork extends Graph {
 				if (line.isEmpty() || line.startsWith("#") || line.startsWith("{") || line.startsWith("}"))
 					continue;
 				
-				// Handle graph label or other properties if necessary (ignored for now)
 				
 				Matcher matcher = edgePattern.matcher(line);
 				if (matcher.find()) {
-					nodeNames.add(matcher.group(1)); // Source
-					nodeNames.add(matcher.group(2)); // Target
-					lines.add(line); // Store valid edge line for second pass
+					nodeNames.add(matcher.group(1));
+					nodeNames.add(matcher.group(2));
+					lines.add(line); 
 				}
 			}
 		} catch (IOException e) {
@@ -134,11 +191,9 @@ public class FlowNetwork extends Graph {
 			return null;
 		}
 
-		// 2. Map names to IDs
 		Map<String, Integer> nameToId = new HashMap<>();
 		Set<Integer> usedIds = new HashSet<>();
 
-		// First pass: Assign IDs to integer names
 		for (String name : nodeNames) {
 			if (name.matches("\\d+")) {
 				int id = Integer.parseInt(name);
@@ -147,7 +202,6 @@ public class FlowNetwork extends Graph {
 			}
 		}
 
-		// Second pass: Assign IDs to non-integer names
 		int nextId = 1;
 		for (String name : nodeNames) {
 			if (!nameToId.containsKey(name)) {
@@ -159,15 +213,11 @@ public class FlowNetwork extends Graph {
 			}
 		}
 
-		// 3. Create Nodes with names and add to graph
-		// We use the 'protected' access to adjEdList to insert named nodes, 
-		// because standard addNode(int) creates nodes without names.
 		for (Map.Entry<String, Integer> entry : nameToId.entrySet()) {
 			Node n = new Node(entry.getValue(), entry.getKey(), graph);
 			graph.adjEdList.put(n, new ArrayList<>());
 		}
 
-		// 4. Parse edges and add to graph
 		for (String line : lines) {
 			Matcher matcher = edgePattern.matcher(line);
 			if (matcher.find()) {
@@ -184,24 +234,19 @@ public class FlowNetwork extends Graph {
 				if (attributes != null) {
 					Matcher labelMatcher = labelPattern.matcher(attributes);
 					if (labelMatcher.find()) {
-						String p1 = labelMatcher.group(1); // First number
-						String p2 = labelMatcher.group(2); // Second number (optional)
+						String p1 = labelMatcher.group(1);
+						String p2 = labelMatcher.group(2);
 
 						if (p2 != null) {
-							// Format: flow/capacity
 							flow = Integer.parseInt(p1);
 							capacity = Integer.parseInt(p2);
 						} else {
-							// Format: capacity (flow is 0)
 							capacity = Integer.parseInt(p1);
 							flow = 0;
 						}
 					}
 				}
 				
-				// Use addEdge with flow and capacity
-				// Note: addEdge will call addNodeIfAbsent, which checks usesNode.
-				// Since we manually added all nodes, it won't overwrite them.
 				graph.addEdge(fromId, toId, capacity, flow);
 			}
 		}
