@@ -11,18 +11,18 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
-import m1graphs2025.Node;
 import m1graphs2025.Edge;
+import m1graphs2025.Node;
 
 /**
  * Provides static factory methods to create different implementations of
- * {@link FordFulkerson.PathFinder} for finding augmenting paths in a residual graph.
+ * FordFulkerson.PathFinder for finding augmenting paths in a residual graph.
  * These pathfinding strategies can be used with the Ford-Fulkerson algorithm
  * to determine the maximum flow.
  */
 public class PathFinder {
 	/**
-	 * Returns a {@link FordFulkerson.PathFinder} implementation that uses Breadth-First Search (BFS)
+	 * Returns a FordFulkerson.PathFinder implementation that uses Breadth-First Search (BFS)
 	 * to find an augmenting path in the residual graph.
 	 * This strategy corresponds to the Edmonds-Karp algorithm.
 	 *
@@ -55,7 +55,7 @@ public class PathFinder {
 	}
 
 	/**
-	 * Returns a {@link FordFulkerson.PathFinder} implementation that uses Depth-First Search (DFS)
+	 * Returns a FordFulkerson.PathFinder implementation that uses Depth-First Search (DFS)
 	 * to find an augmenting path in the residual graph.
 	 *
 	 * @return A PathFinder instance using DFS.
@@ -87,7 +87,7 @@ public class PathFinder {
 	}
 
 	/**
-	 * Returns a {@link FordFulkerson.PathFinder} implementation that uses Dijkstra's algorithm
+	 * Returns a FordFulkerson.PathFinder implementation that uses Dijkstra's algorithm
 	 * to find an augmenting path in the residual graph, prioritizing paths with higher residual capacity.
 	 * Note: Dijkstra's is typically used for shortest path on edge weights, here it's adapted
 	 * to find a path in the residual graph.
