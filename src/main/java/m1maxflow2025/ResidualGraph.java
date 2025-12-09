@@ -7,14 +7,30 @@ import m1graphs2025.Edge;
 import m1graphs2025.Graph;
 import m1graphs2025.Node;
 
+/**
+ * Represents the Residual Graph derived from a Flow Network.
+ * It contains forward edges (remaining capacity) and backward edges (current flow)
+ * to facilitate finding augmenting paths.
+ */
 public class ResidualGraph extends Graph {
 	private List<Node> lastPath;
 	Integer residualCapacity;
 
+	/**
+	 * Default constructor for an empty Residual Graph.
+	 */
 	public ResidualGraph() {
 		super();
 	}
 
+	/**
+	 * Constructs a Residual Graph from a given Flow Network.
+	 * Forward edges are added if capacity > flow (residual capacity).
+	 * Backward edges are added if flow > 0.
+	 *
+	 * @param flowNetwork The original flow network
+	 * @return The constructed ResidualGraph
+	 */
 	public static ResidualGraph from(FlowNetwork flowNetwork) {
 		ResidualGraph residualGraph = new ResidualGraph();
 
@@ -38,16 +54,33 @@ public class ResidualGraph extends Graph {
 		return residualGraph;
 	}
 
+	/**
+	 * Identifies the source node of the graph (assumed to be the node with the smallest ID).
+	 *
+	 * @return The source node
+	 */
 	public Node sourceNode() {
 		int sourceId = smallestNodeId();
 		return getNode(sourceId);
 	}
 
+	/**
+	 * Identifies the target node of the graph (assumed to be the node with the largest ID).
+	 *
+	 * @return The target node
+	 */
 	public Node targetNode() {
 		int sourceId = largestNodeId();
 		return getNode(sourceId);
 	}
 
+	/**
+	 * Calculates the bottleneck capacity (minimum edge weight) along a given path.
+	 * Side effect: stores the path and bottleneck value for visualization purposes.
+	 *
+	 * @param path The path to evaluate
+	 * @return The bottleneck capacity
+	 */
 	public int bottleneckOf(List<Node> path) {
 		int b = Integer.MAX_VALUE;
 
@@ -94,6 +127,12 @@ public class ResidualGraph extends Graph {
 		return false;
 	}
 
+	/**
+	 * Generates a DOT representation of the residual graph.
+	 * If an augmenting path was last calculated, it highlights the path (blue) and the bottleneck edge (red font).
+	 *
+	 * @return A string containing the DOT representation
+	 */
 	@Override
 	public String toDotString() {
 		StringBuilder sb = new StringBuilder();
