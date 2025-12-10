@@ -5,8 +5,6 @@ import m1graphs2025.Graph;
 import m1graphs2025.Node;
 import m1graphs2025.UndirectedGraph;
 import m1maxflow2025.FlowNetwork;
-import m1maxflow2025.FordFulkerson;
-import m1maxflow2025.PathFinder;
 
 /**
  * Demonstration class for the m1graphs2025 API.
@@ -132,29 +130,31 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		System.out.println("\nImporting flownetwork from 'flowNetwork.gv'");
-		FlowNetwork imported = FlowNetwork.fromDotFile("flowNetwork");
-		if (imported != null) {
-			System.out.println("flownetwork imported successfully:\n" + imported);
-			System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
-			System.out.println(imported.toDotString());
-			// System.out.println(FordFulkerson.maxFlow(imported,
-			// PathFinder.bfsPathFinder()).toDotString());
-			// System.out.println(FordFulkerson.maxFlow(imported,
-			// PathFinder.dfsPathFinder()).toDotString());
-			// System.out.println(FordFulkerson.maxFlow(imported,
-			// PathFinder.dijkstraPathFinder()).toDotString());
-			// System.out.println(FordFulkerson.maxFlow(imported,
-			// PathFinder.dijkstraMaxPathFinder()).toDotString());
-			System.out.println(FordFulkerson.maxFlow(imported, PathFinder.bfsPathFinder()).toDotString());
-		} else {
-			System.out.println("Failed to import the DOT file.");
-		}
+		// //System.out.println("\nImporting flownetwork from 'flowNetwork.gv'");
+		// FlowNetwork imported = FlowNetwork.fromDotFile("flowNetwork");
+		// if (imported != null) {
+		// 	//System.out.println("flownetwork imported successfully:\n" + imported);
+		// 	//System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
+		// 	//System.out.println(imported.toDotString());
+		// 	// System.out.println(FordFulkerson.maxFlow(imported,
+		// 	// PathFinder.bfsPathFinder()).toDotString());
+		// 	// System.out.println(FordFulkerson.maxFlow(imported,
+		// 	// PathFinder.dfsPathFinder()).toDotString());
+		// 	// System.out.println(FordFulkerson.maxFlow(imported,
+		// 	// PathFinder.dijkstraPathFinder()).toDotString());
+		// 	// System.out.println(FordFulkerson.maxFlow(imported,
+		// 	// PathFinder.dijkstraMaxPathFinder()).toDotString());
+		// 	System.out.println(FordFulkerson.maxFlow(imported, PathFinder.bfsPathFinder()).toDotString());
+		// } else {
+		// 	System.out.println("Failed to import the DOT file.");
+		// }
 
-		FlowNetwork fnBFS = createFn();
-		FlowNetwork fnDFS = createFn();
-		FlowNetwork fnDIJ = createFn();
-		FlowNetwork fnDIJMax = createFn();
+		// FlowNetwork fnBFS = createFn();
+		// FlowNetwork fnDFS = createFn();
+		// FlowNetwork fnDIJ = createFn();
+		// FlowNetwork fnDIJMax = createFn();
+		FlowNetwork fnBFS2 = createFn2();
+		System.out.println(fnBFS2.toDotString());
 
 		// FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS,
 		// PathFinder.bfsPathFinder());
@@ -182,6 +182,19 @@ public class Main {
 		fn.addEdge(4, 5, 3);
 		fn.addEdge(4, 6, 4);
 		fn.addEdge(5, 6, 6);
+		return fn;
+	}
+
+	private static FlowNetwork createFn2() {
+		FlowNetwork fn = new FlowNetwork();
+		fn.addEdge(new Node(1, "s", fn), new Node(2, fn), 1);
+		fn.addEdge(2, 3, 2);
+		fn.addEdge(1, 4, 8);
+		fn.addEdge(4, 2, 1);
+		fn.addEdge(4, 5, 7);
+		fn.addEdge(5, 3, 5);
+		fn.addEdge(fn.getNode(3), new Node(6, "t", fn), 7);
+		fn.addEdge(5, 6, 2);
 		return fn;
 	}
 }

@@ -42,8 +42,6 @@ public class FordFulkerson {
 
 		while (true) {
 			ResidualGraph r = ResidualGraph.from(fn);
-			System.out.println(r.toDotString());
-			System.out.println(r.sourceNode() + " " + r.targetNode());
 			List<Node> path = pathFinder.findPath(r, r.sourceNode(), r.targetNode());
 
 			if (path == null) {

@@ -56,6 +56,24 @@ public class FlowNetwork extends Graph {
 		adjEdList.get(from).add(new FlowEdge(from, to, this, capacity, flow));
 	}
 
+	public void addEdge(Node fromNode, Node toNode, Integer capacity, Integer flow) {
+		if (capacity == null || flow == null) {
+			throw new NullPointerException("Parameters cannot be null");
+		}
+		addNodeIfAbsent(fromNode.getId(), fromNode.getName());
+		addNodeIfAbsent(toNode.getId(), toNode.getName());
+
+		Node from = getNode(fromNode.getId());
+		Node to = getNode(toNode.getId());
+
+		adjEdList.get(from).add(new FlowEdge(from, to, this, capacity, flow));
+	}
+
+	@Override
+	public void addEdge(Node fromNode, Node toNode, Integer capacity) {
+		addEdge(fromNode, toNode, capacity, 0);
+	}
+
 	/**
 	 * Updates the flow along a given path by a delta value.
 	 * It adds flow to forward edges and subtracts flow from backward edges.
