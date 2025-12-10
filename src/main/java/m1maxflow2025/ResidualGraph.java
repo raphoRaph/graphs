@@ -1,6 +1,5 @@
 package m1maxflow2025;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import m1graphs2025.Edge;
@@ -55,23 +54,31 @@ public class ResidualGraph extends Graph {
 	}
 
 	/**
-	 * Identifies the source node of the graph (assumed to be the node with the smallest ID).
+	 * Identifies the source node of the graph (assumed to be the node with the smallest ID if no "s" is found).
 	 *
 	 * @return The source node
 	 */
 	public Node sourceNode() {
-		int sourceId = smallestNodeId();
-		return getNode(sourceId);
+		for (Node node : getAllNodes()) {
+			if (node.getName() != null && "s".equals(node.getName())) {
+				return getNode(node.getId());
+			}
+		}
+		return getNode(smallestNodeId());
 	}
 
 	/**
-	 * Identifies the target node of the graph (assumed to be the node with the largest ID).
+	 * Identifies the target node of the graph (assumed to be the node with the largest ID if no "t" is found).
 	 *
 	 * @return The target node
 	 */
 	public Node targetNode() {
-		int sourceId = largestNodeId();
-		return getNode(sourceId);
+		for (Node node : getAllNodes()) {
+			if (node.getName() != null && "t".equals(node.getName())) {
+				return getNode(node.getId());
+			}
+		}
+		return getNode(largestNodeId());
 	}
 
 	/**
