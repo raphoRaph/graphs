@@ -181,6 +181,12 @@ public class Graph {
 			addNode(nodeId);
 	}
 
+	protected void addNodeIfAbsent(int nodeId, String name) {
+		if (!usesNode(nodeId)) {
+			adjEdList.put(new Node(nodeId, name, this), new ArrayList<>());
+		}
+	}
+
 	/**
 	 * Removes a given Node from the graph.
 	 *

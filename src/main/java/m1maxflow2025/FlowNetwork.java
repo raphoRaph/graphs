@@ -107,7 +107,8 @@ public class FlowNetwork extends Graph {
 
 	/**
 	 * Generates a DOT representation of the flow network.
-	 * Includes the total flow value in the label and edge attributes for flow/capacity.
+	 * Includes the total flow value in the label and edge attributes for
+	 * flow/capacity.
 	 *
 	 * @return A string containing the DOT representation
 	 */
@@ -123,7 +124,7 @@ public class FlowNetwork extends Graph {
 			FlowEdge f = (FlowEdge) e;
 
 			sb.append("\t")
-					.append(f.from()).append(" -> ").append(f.to())
+					.append(f.from().toString()).append(" -> ").append(f.to().toString())
 					.append(" [label=\"");
 
 			sb.append(f.getFlow() != 0 ? f.getFlow() + "/" + f.getWeight()
@@ -148,7 +149,8 @@ public class FlowNetwork extends Graph {
 
 	/**
 	 * Creates a FlowNetwork from a DOT file with a specific extension.
-	 * It parses labels to extract flow and capacity (e.g., label="flow/capacity" or label="capacity").
+	 * It parses labels to extract flow and capacity (e.g., label="flow/capacity" or
+	 * label="capacity").
 	 *
 	 * @param filename  name of the file without extension
 	 * @param extension the file extension (e.g., ".gv")
@@ -177,13 +179,12 @@ public class FlowNetwork extends Graph {
 				line = line.trim();
 				if (line.isEmpty() || line.startsWith("#") || line.startsWith("{") || line.startsWith("}"))
 					continue;
-				
-				
+
 				Matcher matcher = edgePattern.matcher(line);
 				if (matcher.find()) {
 					nodeNames.add(matcher.group(1));
 					nodeNames.add(matcher.group(2));
-					lines.add(line); 
+					lines.add(line);
 				}
 			}
 		} catch (IOException e) {
@@ -246,12 +247,11 @@ public class FlowNetwork extends Graph {
 						}
 					}
 				}
-				
+
 				graph.addEdge(fromId, toId, capacity, flow);
 			}
 		}
 
 		return graph;
 	}
-
 }

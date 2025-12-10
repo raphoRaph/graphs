@@ -138,6 +138,15 @@ public class Main {
 			System.out.println("flownetwork imported successfully:\n" + imported);
 			System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
 			System.out.println(imported.toDotString());
+			// System.out.println(FordFulkerson.maxFlow(imported,
+			// PathFinder.bfsPathFinder()).toDotString());
+			// System.out.println(FordFulkerson.maxFlow(imported,
+			// PathFinder.dfsPathFinder()).toDotString());
+			// System.out.println(FordFulkerson.maxFlow(imported,
+			// PathFinder.dijkstraPathFinder()).toDotString());
+			// System.out.println(FordFulkerson.maxFlow(imported,
+			// PathFinder.dijkstraMaxPathFinder()).toDotString());
+			System.out.println(FordFulkerson.maxFlow(imported, PathFinder.bfsPathFinder()).toDotString());
 		} else {
 			System.out.println("Failed to import the DOT file.");
 		}
@@ -147,15 +156,19 @@ public class Main {
 		FlowNetwork fnDIJ = createFn();
 		FlowNetwork fnDIJMax = createFn();
 
-		FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS, PathFinder.bfsPathFinder());
-		FlowNetwork resultDFS = FordFulkerson.maxFlow(fnDFS, PathFinder.dfsPathFinder());
-		FlowNetwork resultDIJ = FordFulkerson.maxFlow(fnDIJ, PathFinder.dijkstraPathFinder());
-		FlowNetwork resultDIJMax = FordFulkerson.maxFlow(fnDIJMax, PathFinder.dijkstraMaxPathFinder());
+		// FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS,
+		// PathFinder.bfsPathFinder());
+		// FlowNetwork resultDFS = FordFulkerson.maxFlow(fnDFS,
+		// PathFinder.dfsPathFinder());
+		// FlowNetwork resultDIJ = FordFulkerson.maxFlow(fnDIJ,
+		// PathFinder.dijkstraPathFinder());
+		// FlowNetwork resultDIJMax = FordFulkerson.maxFlow(fnDIJMax,
+		// PathFinder.dijkstraMaxPathFinder());
 
-		System.out.println("Max flow network:\n" + resultBFS.toDotString());
-		System.out.println("Max flow network:\n" + resultDFS.toDotString());
-		System.out.println("Max flow network:\n" + resultDIJ.toDotString());
-		System.out.println("Max flow network:\n" + resultDIJMax.toDotString());
+		// System.out.println("Max flow network:\n" + resultBFS.toDotString());
+		// System.out.println("Max flow network:\n" + resultDFS.toDotString());
+		// System.out.println("Max flow network:\n" + resultDIJ.toDotString());
+		// System.out.println("Max flow network:\n" + resultDIJMax.toDotString());
 
 	}
 

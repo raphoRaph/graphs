@@ -8,7 +8,8 @@ import m1graphs2025.Node;
 
 /**
  * Represents the Residual Graph derived from a Flow Network.
- * It contains forward edges (remaining capacity) and backward edges (current flow)
+ * It contains forward edges (remaining capacity) and backward edges (current
+ * flow)
  * to facilitate finding augmenting paths.
  */
 public class ResidualGraph extends Graph {
@@ -37,11 +38,13 @@ public class ResidualGraph extends Graph {
 			FlowEdge flow = (FlowEdge) edge;
 			int fromId = flow.from().getId();
 			int toId = flow.to().getId();
+			String fromName = flow.from().getName();
+			String toName = flow.to().getName();
 			Integer capacity = flow.getWeight();
 			Integer iFlow = flow.getFlow();
 
-			residualGraph.addNodeIfAbsent(fromId);
-			residualGraph.addNodeIfAbsent(toId);
+			residualGraph.addNodeIfAbsent(fromId, fromName);
+			residualGraph.addNodeIfAbsent(toId, toName);
 
 			if (capacity - iFlow > 0) {
 				residualGraph.addEdge(fromId, toId, capacity - iFlow);
@@ -54,7 +57,8 @@ public class ResidualGraph extends Graph {
 	}
 
 	/**
-	 * Identifies the source node of the graph (assumed to be the node with the smallest ID if no "s" is found).
+	 * Identifies the source node of the graph (assumed to be the node with the
+	 * smallest ID if no "s" is found).
 	 *
 	 * @return The source node
 	 */
@@ -68,7 +72,8 @@ public class ResidualGraph extends Graph {
 	}
 
 	/**
-	 * Identifies the target node of the graph (assumed to be the node with the largest ID if no "t" is found).
+	 * Identifies the target node of the graph (assumed to be the node with the
+	 * largest ID if no "t" is found).
 	 *
 	 * @return The target node
 	 */
@@ -136,7 +141,8 @@ public class ResidualGraph extends Graph {
 
 	/**
 	 * Generates a DOT representation of the residual graph.
-	 * If an augmenting path was last calculated, it highlights the path (blue) and the bottleneck edge (red font).
+	 * If an augmenting path was last calculated, it highlights the path (blue) and
+	 * the bottleneck edge (red font).
 	 *
 	 * @return A string containing the DOT representation
 	 */
@@ -160,7 +166,7 @@ public class ResidualGraph extends Graph {
 			boolean isBottleneck = inPath && e.getWeight() == residualCapacity;
 
 			sb.append("\t")
-					.append(e.from()).append(" -> ").append(e.to())
+					.append(e.from().toString()).append(" -> ").append(e.to().toString())
 					.append(" [label=").append(e.getWeight())
 					.append(", len=").append(e.getWeight());
 
