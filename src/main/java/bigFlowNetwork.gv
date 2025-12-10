@@ -1,0 +1,90 @@
+digraph flow_huge {
+    rankdir="LR"
+    label="Very large capacity graph"
+
+    s -> A [label="15", len=15]
+    s -> B [label="18", len=18]
+    s -> C [label="12", len=12]
+    s -> D [label="10", len=10]
+
+    A -> E [label="9", len=9]
+    A -> F [label="7", len=7]
+    A -> G [label="5", len=5]
+
+    B -> E [label="11", len=11]
+    B -> F [label="8", len=8]
+    B -> H [label="6", len=6]
+
+    C -> F [label="10", len=10]
+    C -> G [label="8", len=8]
+    C -> H [label="7", len=7]
+
+    D -> G [label="6", len=6]
+    D -> H [label="9", len=9]
+    D -> I [label="5", len=5]
+
+    E -> J [label="12", len=12]
+    E -> K [label="7", len=7]
+    E -> L [label="5", len=5]
+
+    F -> J [label="9", len=9]
+    F -> K [label="10", len=10]
+    F -> M [label="6", len=6]
+
+    G -> K [label="8", len=8]
+    G -> L [label="9", len=9]
+    G -> M [label="7", len=7]
+
+    H -> L [label="6", len=6]
+    H -> M [label="8", len=8]
+    H -> N [label="10", len=10]
+
+    I -> M [label="5", len=5]
+    I -> N [label="7", len=7]
+    I -> O [label="6", len=6]
+
+    J -> P [label="13", len=13]
+    J -> Q [label="10", len=10]
+
+    K -> P [label="11", len=11]
+    K -> R [label="8", len=8]
+
+    L -> Q [label="9", len=9]
+    L -> R [label="6", len=6]
+    L -> S [label="5", len=5]
+
+    M -> R [label="10", len=10]
+    M -> S [label="7", len=7]
+    M -> T [label="9", len=9]
+
+    N -> S [label="11", len=11]
+    N -> T [label="6", len=6]
+    N -> U [label="8", len=8]
+
+    O -> T [label="12", len=12]
+    O -> U [label="9", len=9]
+
+    P -> V [label="15", len=15]
+    P -> W [label="10", len=10]
+
+    Q -> V [label="7", len=7]
+    Q -> W [label="8", len=8]
+
+    R -> V [label="12", len=12]
+    R -> X [label="14", len=14]
+
+    S -> W [label="9", len=9]
+    S -> X [label="11", len=11]
+
+    T -> X [label="10", len=10]
+    T -> Y [label="8", len=8]
+
+    U -> Y [label="12", len=12]
+    U -> Z [label="9", len=9]
+
+    V -> t [label="20", len=20]
+    W -> t [label="15", len=15]
+    X -> t [label="17", len=17]
+    Y -> t [label="13", len=13]
+    Z -> t [label="11", len=11]
+}

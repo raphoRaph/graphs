@@ -115,12 +115,27 @@ public class FlowNetwork extends Graph {
 	 * @return The total flow value
 	 */
 	private int flowValue() {
-		int s = smallestNodeId();
+		int s = sourceNode().getId();
 		int total = 0;
 		for (Edge edge : getOutEdges(s)) {
 			total += ((FlowEdge) edge).getFlow();
 		}
 		return total;
+	}
+
+	/**
+	 * Identifies the source node of the graph (assumed to be the node with the
+	 * smallest ID if no "s" is found).
+	 *
+	 * @return The source node
+	 */
+	public Node sourceNode() {
+		for (Node node : getAllNodes()) {
+			if (node.getName() != null && "s".equals(node.getName())) {
+				return getNode(node.getId());
+			}
+		}
+		return getNode(smallestNodeId());
 	}
 
 	/**

@@ -14,10 +14,12 @@ import m1maxflow2025.PathFinder;
  * Shows how to build, explore, and export/import graphs.
  * This serves as a quick test of the Graph, Node, and Edge classes.
  *
- * Authors: Name1, Name2
+ * Authors: TATIN, FAIVRE
  * Date: November 2025
  */
 public class Main {
+
+	// Test of m1graphs2025
 	public static void mainGraph(String[] args) {
 		System.out.println("\n==================================================");
 		System.out.println(" Creating DIRECTED graph demonstration");
@@ -131,20 +133,22 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		importDot();
+		importDot("flowNetwork", PathFinder.bfsPathFinder());
+		importDot("bigFlowNetwork", PathFinder.dijkstraMaxPathFinder());
+		importDot("bigFlowNetwork", PathFinder.dijkstraPathFinder());
 		fn1();
 		fn2();
 		allPathFinder();
 	}
 
-	private static void importDot() {
-		System.out.println("\nImporting flownetwork from 'flowNetwork.gv'");
-		FlowNetwork imported = FlowNetwork.fromDotFile("flowNetwork");
+	private static void importDot(String file, FordFulkerson.PathFinder finder) {
+		System.out.println("\nImporting flownetwork from " + file + ".gv");
+		FlowNetwork imported = FlowNetwork.fromDotFile(file);
 		if (imported != null) {
 			System.out.println("flownetwork imported successfully:\n" + imported);
-			System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
+			System.out.println("Imported flownetwork edges: " + imported.nbEdges());
 			System.out.println(imported.toDotString());
-			System.out.println(FordFulkerson.maxFlow(imported, PathFinder.bfsPathFinder()).toDotString());
+			System.out.println(FordFulkerson.maxFlow(imported, finder).toDotString());
 		} else {
 			System.out.println("Failed to import the DOT file.");
 		}
@@ -158,11 +162,11 @@ public class Main {
 
 	private static void fn2() {
 		FlowNetwork fnBFS2 = createFn2();
-		System.out.println(fnBFS2.toDotString());
+		FlowNetwork resultBFS2 = FordFulkerson.maxFlow(fnBFS2, PathFinder.bfsPathFinder());
+		System.out.println(resultBFS2.toDotString());
 	}
 
 	private static void allPathFinder() {
-
 		FlowNetwork fnBFS = createFn();
 		FlowNetwork fnDFS = createFn();
 		FlowNetwork fnDIJ = createFn();
