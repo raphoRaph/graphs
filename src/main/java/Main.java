@@ -5,6 +5,8 @@ import m1graphs2025.Graph;
 import m1graphs2025.Node;
 import m1graphs2025.UndirectedGraph;
 import m1maxflow2025.FlowNetwork;
+import m1maxflow2025.FordFulkerson;
+import m1maxflow2025.PathFinder;
 
 /**
  * Demonstration class for the m1graphs2025 API.
@@ -129,47 +131,52 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
+		importDot();
+		fn1();
+		fn2();
+		allPathFinder();
+	}
 
-		// //System.out.println("\nImporting flownetwork from 'flowNetwork.gv'");
-		// FlowNetwork imported = FlowNetwork.fromDotFile("flowNetwork");
-		// if (imported != null) {
-		// 	//System.out.println("flownetwork imported successfully:\n" + imported);
-		// 	//System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
-		// 	//System.out.println(imported.toDotString());
-		// 	// System.out.println(FordFulkerson.maxFlow(imported,
-		// 	// PathFinder.bfsPathFinder()).toDotString());
-		// 	// System.out.println(FordFulkerson.maxFlow(imported,
-		// 	// PathFinder.dfsPathFinder()).toDotString());
-		// 	// System.out.println(FordFulkerson.maxFlow(imported,
-		// 	// PathFinder.dijkstraPathFinder()).toDotString());
-		// 	// System.out.println(FordFulkerson.maxFlow(imported,
-		// 	// PathFinder.dijkstraMaxPathFinder()).toDotString());
-		// 	System.out.println(FordFulkerson.maxFlow(imported, PathFinder.bfsPathFinder()).toDotString());
-		// } else {
-		// 	System.out.println("Failed to import the DOT file.");
-		// }
+	private static void importDot() {
+		System.out.println("\nImporting flownetwork from 'flowNetwork.gv'");
+		FlowNetwork imported = FlowNetwork.fromDotFile("flowNetwork");
+		if (imported != null) {
+			System.out.println("flownetwork imported successfully:\n" + imported);
+			System.out.println("Imported flownetwork edges (8): " + imported.nbEdges());
+			System.out.println(imported.toDotString());
+			System.out.println(FordFulkerson.maxFlow(imported, PathFinder.bfsPathFinder()).toDotString());
+		} else {
+			System.out.println("Failed to import the DOT file.");
+		}
+	}
 
-		// FlowNetwork fnBFS = createFn();
-		// FlowNetwork fnDFS = createFn();
-		// FlowNetwork fnDIJ = createFn();
-		// FlowNetwork fnDIJMax = createFn();
+	private static void fn1() {
+		FlowNetwork fnBFS = createFn();
+		FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS, PathFinder.bfsPathFinder());
+		System.out.println(resultBFS.toDotString());
+	}
+
+	private static void fn2() {
 		FlowNetwork fnBFS2 = createFn2();
 		System.out.println(fnBFS2.toDotString());
+	}
 
-		// FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS,
-		// PathFinder.bfsPathFinder());
-		// FlowNetwork resultDFS = FordFulkerson.maxFlow(fnDFS,
-		// PathFinder.dfsPathFinder());
-		// FlowNetwork resultDIJ = FordFulkerson.maxFlow(fnDIJ,
-		// PathFinder.dijkstraPathFinder());
-		// FlowNetwork resultDIJMax = FordFulkerson.maxFlow(fnDIJMax,
-		// PathFinder.dijkstraMaxPathFinder());
+	private static void allPathFinder() {
 
-		// System.out.println("Max flow network:\n" + resultBFS.toDotString());
-		// System.out.println("Max flow network:\n" + resultDFS.toDotString());
-		// System.out.println("Max flow network:\n" + resultDIJ.toDotString());
-		// System.out.println("Max flow network:\n" + resultDIJMax.toDotString());
+		FlowNetwork fnBFS = createFn();
+		FlowNetwork fnDFS = createFn();
+		FlowNetwork fnDIJ = createFn();
+		FlowNetwork fnDIJMax = createFn();
 
+		FlowNetwork resultBFS = FordFulkerson.maxFlow(fnBFS, PathFinder.bfsPathFinder());
+		FlowNetwork resultDFS = FordFulkerson.maxFlow(fnDFS, PathFinder.dfsPathFinder());
+		FlowNetwork resultDIJ = FordFulkerson.maxFlow(fnDIJ, PathFinder.dijkstraPathFinder());
+		FlowNetwork resultDIJMax = FordFulkerson.maxFlow(fnDIJMax, PathFinder.dijkstraMaxPathFinder());
+
+		System.out.println("Max flow network BFS:\n" + resultBFS.toDotString());
+		System.out.println("Max flow network DFS:\n" + resultDFS.toDotString());
+		System.out.println("Max flow network DIJ:\n" + resultDIJ.toDotString());
+		System.out.println("Max flow network DIJMax:\n" + resultDIJMax.toDotString());
 	}
 
 	private static FlowNetwork createFn() {
