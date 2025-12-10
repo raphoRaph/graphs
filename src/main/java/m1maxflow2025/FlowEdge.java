@@ -9,6 +9,9 @@ public class FlowEdge extends Edge {
 
 	public FlowEdge(Node from, Node to, Graph graphHolder, Integer weight, Integer flow) {
 		super(from, to, graphHolder, weight);
+		if (flow > weight) {
+			throw new IllegalArgumentException("Flow cannot higher than capacity");
+		}
 		this.flow = flow;
 	}
 
